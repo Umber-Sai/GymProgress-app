@@ -1,0 +1,44 @@
+@import '../../styles.scss';
+
+
+
+.exercise {
+    background-color: $block-color;
+    padding: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 30px;
+    text-align: right;
+    .exercise-name {
+        font-size: 25px;
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .exercise-sets {
+        .exercise-set {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            .exercise-set-form-field {
+                width: 60px;
+                input{
+                    text-align: center;
+                }
+            }
+            .exercise-set-comment textarea{
+                height: 15px;
+            }
+        }
+    }
+    .add-set {
+        margin-bottom: 20px;
+
+    }
+    .exercise-comment {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+}

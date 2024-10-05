@@ -1,0 +1,23 @@
+<div class="exercise">
+    <div class="exercise-name">{{structure.name}}</div>
+    <div class="exercise-sets" >
+        <div class="exercise-set" *ngFor="let set of structure.sets; let i = index">
+            <div class="exercise-set-index">{{i + 1}}</div>
+            <mat-form-field class="exercise-set-form-field">
+                <mat-label>Weight</mat-label>
+                <input matInput type="number" min="0" step="0.25" [(ngModel)]="set.weight">
+            </mat-form-field>
+            <mat-form-field class="exercise-set-form-field">
+                <mat-label>Repeats</mat-label>
+                <input matInput type="number" min="0" [(ngModel)]="set.repeats">
+            </mat-form-field>
+            <!-- <button mat-raised-button class="add-set" (click)="deleteSet(i)">delete</button> -->
+        </div>
+    </div>
+    <!-- <button mat-raised-button class="add-set" (click)="addSet()">add set</button> -->
+    <mat-divider></mat-divider>
+    <mat-form-field class="exercise-comment">
+        <mat-label>Comment</mat-label>
+        <textarea matInput [(ngModel)]="structure.comment"></textarea>
+    </mat-form-field>
+</div>

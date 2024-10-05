@@ -1,0 +1,24 @@
+<div class="training">
+    <div class="container">
+        <div class="training-date">26/08/2024</div>
+
+        <div class="training-exercises">
+
+            <exercise-block *ngFor="let exercise of exercises" [structure]="exercise"></exercise-block>
+
+        </div>
+
+        <div class="add-exercise">
+            <mat-form-field class="add-exercise-form-control">
+                <input matInput type="text" [(ngModel)]="newExercise"  [matAutocomplete]="auto" (ngModelChange)="filterExercises($event)">
+                <mat-autocomplete #auto="matAutocomplete" >
+                    <mat-option *ngFor="let option of filteredOptions" [value]="option">
+                      {{option}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <button mat-raised-button class="add-exercise-btn" (click)="addExercise()">add exercise</button>
+        </div>
+    </div>
+    
+</div>
