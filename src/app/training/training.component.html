@@ -10,15 +10,17 @@
 
         <div class="add-exercise">
             <mat-form-field class="add-exercise-form-control">
-                <input matInput type="text" [(ngModel)]="newExercise"  [matAutocomplete]="auto" (ngModelChange)="filterExercises($event)">
+                <input matInput type="text" [(ngModel)]="newExerciseName"  [matAutocomplete]="auto" (ngModelChange)="filterExercises($event)">
                 <mat-autocomplete #auto="matAutocomplete" >
-                    <mat-option *ngFor="let option of filteredOptions" [value]="option">
-                      {{option}}
+                    <mat-option *ngFor="let option of filteredOptions" [value]="option.name">
+                      {{option.name}}
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
             <button mat-raised-button class="add-exercise-btn" (click)="addExercise()">add exercise</button>
         </div>
+
+        <div (click)="finishTrain()">finish</div>
     </div>
     
 </div>

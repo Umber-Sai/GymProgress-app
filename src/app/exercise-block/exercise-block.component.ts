@@ -18,15 +18,5 @@ export class ExerciseBlockComponent implements OnInit {
     console.log(this.structure)
   }
 
-  addSet(): void {
-    this.structure.sets.push({
-      weight : '',
-      repeats : ''
-    })      
-  }
-
-  deleteSet(index: number): void {
-    this.structure.sets.splice(index, 1);
-  }
 
 }
