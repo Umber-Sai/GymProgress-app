@@ -4,41 +4,83 @@
 
 .exercise {
     background-color: $block-color;
-    padding: 30px;
+    padding: 10px 30px 10px 10px;
     width: 100%;
     box-sizing: border-box;
     border-radius: 30px;
     text-align: right;
-    .exercise-name {
-        font-size: 25px;
-        margin-bottom: 20px;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr 150px;
+    position: relative;
+    .exercise-info {
+        // height: 100%;
+        width: calc(100% - 30px);
+        background-color: #f9f9f9;
         text-align: left;
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 20px;
+        overflow: hidden;
+
+
+        display: flex;;
+        flex-direction: column;
+        justify-content: space-between;
+        
+        .exercise-info-last-train {
+            font-size: 14px;
+            color: #bbb;
+            margin-bottom: 5px;
+        }
+        .exercise-info-name {
+            font-size: 25px;
+            // margin-bottom: 20px;
+        }
     }
-    .exercise-sets {
-        .exercise-set {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            .exercise-set-form-field {
-                width: 60px;
-                input{
-                    text-align: center;
-                }
-            }
-            .exercise-set-comment textarea{
-                height: 15px;
+    .exercise-set {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        position: relative;
+        top: 9px;
+        .exercise-set-form-field {
+            width: 60px;
+            input{
+                font-size: 25px;
+                text-align: center;
             }
         }
     }
-    .add-set {
-        margin-bottom: 20px;
-
-    }
     .exercise-comment {
-        width: 100%;
-        margin-top: 10px;
+        width: calc(100% - 20px);
+        margin-top: 20px;
+        grid-column-start: 1;
+        grid-column-end: 3;
+        margin-left: 20px;
+    }
+    .exercise-delete {
+        width: 35px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        border: 2px solid #eee;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        position: absolute;
+        top: -5px;
+        right: -7px;
+
+        cursor: pointer;
+
+        svg {
+            width: 50%;
+        }
+
     }
 
 }

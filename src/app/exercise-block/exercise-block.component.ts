@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ExerciseType } from '../type/exercise.type';
 import { FormBuilder } from '@angular/forms';
 
@@ -10,12 +10,17 @@ import { FormBuilder } from '@angular/forms';
 export class ExerciseBlockComponent implements OnInit {
 
   @Input() structure: ExerciseType = {} as ExerciseType
+  @Output() deleteExerciseEvent: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(
   ) { }
 
   ngOnInit(): void {
     console.log(this.structure)
+  }
+
+  deleteExercise(): void {
+    this.deleteExerciseEvent.next(this.structure.id)
   }
 
 

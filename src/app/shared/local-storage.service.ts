@@ -57,10 +57,11 @@ export class LockalStorageService {
       const lastRecord = storage.find(item => item.date === date);
       if (!lastRecord) return { error: true, message: 'No records in this date' }
       const index = storage.indexOf(lastRecord);
-      storage = storage.splice(0, index + 1);
+      storage = storage.slice(0, index + 1);  //splice or slice??
     }
     return {
       id: exercise.id,
+      lastTrain: storage.at(-1)!.date,
       name: exercise.name,
       weight: storage.filter(item => item.hasOwnProperty('weight')).at(-1)!.weight!,
       repeats: storage.filter(item => item.hasOwnProperty('repeats')).at(-1)!.repeats!,

@@ -1,7 +1,8 @@
 
 
 export type ExerciseType = {
-    id : string
+    id : string,
+    lastTrain : string
     name: string,
     weight: string,
     repeats: string

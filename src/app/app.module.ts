@@ -16,6 +16,7 @@ import {MatDividerModule} from '@angular/material/divider';
 import { ExerciseBlockComponent } from './exercise-block/exercise-block.component';
 import { HttpClientModule } from '@angular/common/http';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     ReactiveFormsModule,
     HttpClientModule,
     MatAutocompleteModule,
+    DatePipe,
     BrowserAnimationsModule
   ],
   providers: [],

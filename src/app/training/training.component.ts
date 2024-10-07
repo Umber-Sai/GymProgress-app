@@ -18,7 +18,7 @@ export class TrainingComponent implements OnInit {
   exercises: ExerciseType[] = [];
   exercisesCompare: ExerciseCompareType[] = []
 
-
+  date = new Date();
 
   allExercises: ExreciseNameIdType[] = this.localStorageService.getAllExercises();
   filteredOptions: ExreciseNameIdType[] = this.allExercises;
@@ -67,6 +67,7 @@ export class TrainingComponent implements OnInit {
     } else {
       newExercise = {
         id: `ex${(this.allExercises.length + this.exercises.length - this.exercisesCompare.length + 1).toString().padStart(4, '0')}`,
+        lastTrain: `${this.date.getMonth()}.${this.date.getDate()}.${this.date.getFullYear()}`,
         name: this.newExerciseName,
         weight: '',
         repeats: '',
@@ -79,9 +80,23 @@ export class TrainingComponent implements OnInit {
     this.newExerciseName = '';
   }
 
+  deleteExercise(id: string) : void {
+    const exercise = this.exercises.find(item => item.id === id);
+    if(exercise) {
+      this.exercises.splice(this.exercises.indexOf(exercise), 1);
+      const compIndex = this.exercisesCompare.indexOf(exercise);
+      if(compIndex > -1) this.exercisesCompare.splice(compIndex, 1)
+
+      this.sessionStorageService.saveExercises(this.exercises);
+      this.sessionStorageService.saveExercisesCompare(this.exercisesCompare);
+    } else {
+      alert('exercise not found in train');
+    }
+  }
+
   finishTrain(): void {
     this.exercises.forEach(exercise => {
-      const newHistory: ExerciseHistoryType = { date: '06.10.2024' };
+      const newHistory: ExerciseHistoryType = { date:  `${this.date.getMonth()}.${this.date.getDate()}.${this.date.getFullYear()}` };
       const compare = this.exercisesCompare.find(compare => compare.id === exercise.id);
       if (compare) {
         if (exercise.repeats !== compare.repeats) newHistory.repeats = exercise.repeats
