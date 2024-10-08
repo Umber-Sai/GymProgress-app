@@ -5,6 +5,8 @@ import { DefaultResponceType } from '../type/default-responce.type';
 import { SessionStorageService } from '../shared/session-storage.service';
 import { ExerciseCompareType } from '../type/exercise-compare.type';
 import { ExerciseHistoryType } from '../type/exercise-history.type';
+import { MatDialog } from '@angular/material/dialog';
+import { PopupComponent } from '../shared/popup/popup.component';
 
 @Component({
   selector: 'app-training',
@@ -25,7 +27,8 @@ export class TrainingComponent implements OnInit {
 
   constructor(
     private localStorageService: LockalStorageService,
-    private sessionStorageService: SessionStorageService
+    private sessionStorageService: SessionStorageService,
+    private dialog : MatDialog,
   ) {
   }
 
@@ -34,6 +37,16 @@ export class TrainingComponent implements OnInit {
   beforeUnloadHandler(event: Event) {
     this.sessionStorageService.saveExercises(this.exercises);
     this.sessionStorageService.saveExercisesCompare(this.exercisesCompare);
+  }
+
+  openDialog() :void {
+    const dialogRef = this.dialog.open(PopupComponent, {data : 'Did you finish your train?'});
+
+    dialogRef.afterClosed().subscribe(resp => {
+      if(resp) {
+        this.finishTrain()
+      }
+    })
   }
 
   ngOnInit(): void {
@@ -96,7 +109,7 @@ export class TrainingComponent implements OnInit {
 
   finishTrain(): void {
     this.exercises.forEach(exercise => {
-      const newHistory: ExerciseHistoryType = { date:  `${this.date.getMonth()}.${this.date.getDate()}.${this.date.getFullYear()}` };
+      const newHistory: ExerciseHistoryType = { date:  `${this.date.getMonth() + 1}.${this.date.getDate()}.${this.date.getFullYear()}` };
       const compare = this.exercisesCompare.find(compare => compare.id === exercise.id);
       if (compare) {
         if (exercise.repeats !== compare.repeats) newHistory.repeats = exercise.repeats
@@ -108,7 +121,7 @@ export class TrainingComponent implements OnInit {
         newHistory.comment = exercise.comment
         this.localStorageService.updateAllExercises({ id: exercise.id, name: exercise.name });
       }
-      if (newHistory.repeats || newHistory.comment || newHistory.weight) {
+      if (newHistory.repeats || newHistory.comment || newHistory.weight || !compare) {
         this.localStorageService.updateExerciseHistory(newHistory, { id: exercise.id, name: exercise.name })
       }
     })

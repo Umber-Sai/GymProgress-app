@@ -17,15 +17,19 @@ import { ExerciseBlockComponent } from './exercise-block/exercise-block.componen
 import { HttpClientModule } from '@angular/common/http';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { DatePipe } from '@angular/common';
+import { SharedModule } from './shared/shared.module';
+import {MatDialogModule} from '@angular/material/dialog'
 
 @NgModule({
   declarations: [
     AppComponent,
     TrainingComponent,
-    ExerciseBlockComponent
+    ExerciseBlockComponent,
   ],
   imports: [
     BrowserModule,
+    SharedModule,
+    MatDialogModule,
     AppRoutingModule,
     MatRippleModule,
     MatIconModule,

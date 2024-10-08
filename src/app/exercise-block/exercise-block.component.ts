@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ExerciseType } from '../type/exercise.type';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { PopupComponent } from '../shared/popup/popup.component';
 
 @Component({
   selector: 'exercise-block',
@@ -13,15 +15,22 @@ export class ExerciseBlockComponent implements OnInit {
   @Output() deleteExerciseEvent: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(
+    private dialog : MatDialog,
   ) { }
 
   ngOnInit(): void {
-    console.log(this.structure)
   }
 
-  deleteExercise(): void {
-    this.deleteExerciseEvent.next(this.structure.id)
+  openDialog() : void {
+    const dialogRef = this.dialog.open(PopupComponent, {data : 'Delete this exercise?'});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result) {
+        this.deleteExerciseEvent.next(this.structure.id)
+      }
+    });
   }
+
 
 
 }

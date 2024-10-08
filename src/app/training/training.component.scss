@@ -1,4 +1,4 @@
-@import '../../styles.scss';
+@import '../../assets/styles/styles.scss';
 
 .training {
     padding: 50px 0;
@@ -10,14 +10,14 @@
             box-sizing: border-box;
             border-radius: 30px;
             text-align: center;
-            background-color: $block-color;
+            // background-color: $block-color;
             margin-bottom: 30px;
         }
 
         .training-exercises {
             display: flex;
             flex-direction: column;
-            row-gap: 20px;
+            row-gap: 30px;
         }
 
         .add-exercise {
@@ -25,7 +25,6 @@
             padding: 15px;
             box-sizing: border-box;
             border-radius: 30px;
-            background-color: $block-color;
             margin-top: 30px;
 
             display: flex;

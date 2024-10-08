@@ -1,27 +1,27 @@
-@import '../../styles.scss';
+@import '../../assets/styles/styles.scss';
 
 
 
 .exercise {
-    background-color: $block-color;
-    padding: 10px 30px 10px 10px;
+    padding: 10px;
     width: 100%;
     box-sizing: border-box;
     border-radius: 30px;
     text-align: right;
     display: grid;
     align-items: center;
-    grid-template-columns: 1fr 150px;
+    grid-template-columns: 1fr 180px;
     position: relative;
     .exercise-info {
-        // height: 100%;
-        width: calc(100% - 30px);
-        background-color: #f9f9f9;
+        width: calc(100% - 15px);
+        
         text-align: left;
-        padding: 20px;
+        padding: 15px;
         box-sizing: border-box;
         border-radius: 20px;
         overflow: hidden;
+        position: relative;
+        z-index: 1;
 
 
         display: flex;;
@@ -29,13 +29,13 @@
         justify-content: space-between;
         
         .exercise-info-last-train {
-            font-size: 14px;
-            color: #bbb;
-            margin-bottom: 5px;
+            font-size: 10px;
+            // margin-bottom: 5px;
         }
         .exercise-info-name {
             font-size: 25px;
-            // margin-bottom: 20px;
+            margin-bottom: 5px;
+            font-family: 'Maple', sans-serif;
         }
     }
     .exercise-set {
@@ -45,6 +45,9 @@
         justify-content: space-between;
         position: relative;
         top: 9px;
+        padding-right: 10px;
+        box-sizing: border-box;
+
         .exercise-set-form-field {
             width: 48%;
             input{
@@ -53,19 +56,34 @@
             }
         }
     }
+
     .exercise-comment {
-        width: calc(100% - 20px);
-        margin-top: 20px;
+        margin-top: 10px;
+        width: 100%;
+        height: 100px;
         grid-column-start: 1;
         grid-column-end: 3;
-        margin-left: 20px;
+        padding: 20px;
+        border-radius: 20px;
+        box-sizing: border-box;
+        overflow: hidden;
+        .exercise-comment-textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            resize: none;
+            margin-bottom: -6px;
+            font-size: 16px;
+            background-color: transparent;
+            color: #bbb;
+        }
     }
     .exercise-delete {
         width: 35px;
         aspect-ratio: 1;
         border-radius: 50%;
-        border: 2px solid #eee;
-        background-color: #fff;
+        border: 1px solid #ffb79bab;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -78,6 +96,7 @@
 
         svg {
             width: 50%;
+            fill: #ffb79bab;
         }
 
     }
