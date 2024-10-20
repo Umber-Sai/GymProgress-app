@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { ExerciseType, ExreciseNameIdType } from '../type/exercise.type';
+import { ExerciseDescriptionType, ExerciseType, ExreciseNameIdType } from '../type/exercise.type';
 import { LockalStorageService } from '../shared/local-storage.service';
 import { DefaultResponceType } from '../type/default-responce.type';
 import { SessionStorageService } from '../shared/session-storage.service';
@@ -7,6 +7,7 @@ import { ExerciseCompareType } from '../type/exercise-compare.type';
 import { ExerciseHistoryType } from '../type/exercise-history.type';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../shared/popup/popup.component';
+import { ExercisesGroupsType } from '../type/exercise-groups.type';
 
 @Component({
   selector: 'app-training',
@@ -18,11 +19,12 @@ export class TrainingComponent implements OnInit {
 
   newExerciseName: string = '';
   exercises: ExerciseType[] = [];
-  exercisesCompare: ExerciseCompareType[] = []
+  exercisesCompare: ExerciseCompareType = {}
 
   date = new Date();
 
   allExercises: ExreciseNameIdType[] = this.localStorageService.getAllExercises();
+  exerciseGroups: ExercisesGroupsType = this.localStorageService.getExerciseGroups();
   filteredOptions: ExreciseNameIdType[] = this.allExercises;
 
   constructor(
@@ -60,34 +62,51 @@ export class TrainingComponent implements OnInit {
 
 
   addExercise(): void {
-    if (this.newExerciseName === '' || this.exercises.some(item => item.name === this.newExerciseName)) return
+    if (this.newExerciseName === '' || this.exercises.some(item => item.name === this.newExerciseName.toLowerCase())) return
     let newExercise: ExerciseType = {} as ExerciseType;
+    this.newExerciseName = this.newExerciseName.toLowerCase()
 
-    const exrcsInList = this.allExercises.find(item => item.name === this.newExerciseName);
-    if (exrcsInList) {
-      const description = this.localStorageService.collectExerciseDescriprion(exrcsInList);
-      if ((description as DefaultResponceType).error) {
-        alert((description as DefaultResponceType).message);
-        return
-      }
-      newExercise = description as ExerciseType;
-      this.exercisesCompare.push({
-        id: newExercise.id,
-        repeats: newExercise.repeats,
-        weight: newExercise.weight,
-        comment: newExercise.comment,
-      })
-    } else {
-      newExercise = {
-        id: `ex${(this.allExercises.length + this.exercises.length - this.exercisesCompare.length + 1).toString().padStart(4, '0')}`,
+
+    newExercise = {
+      id: '',
+      name: this.newExerciseName,
+      group : 'other',
+      description : {
         lastTrain: `${this.date.getMonth()}.${this.date.getDate()}.${this.date.getFullYear()}`,
-        name: this.newExerciseName,
         weight: '',
         repeats: '',
         comment: '',
       }
     }
+    
 
+    const requieredExercise = this.allExercises.find((item : ExreciseNameIdType) => item.name === this.newExerciseName);
+    if (requieredExercise) {
+
+      newExercise.id = requieredExercise.id
+
+      let exerciseGroup = Object.keys(this.exerciseGroups).find(group => {
+        return this.exerciseGroups[group].includes(requieredExercise.id)
+      });
+      if(exerciseGroup) newExercise.group = exerciseGroup
+
+      const exerciseDescription = this.localStorageService.collectExerciseDescriprion(requieredExercise);
+      if ((exerciseDescription as DefaultResponceType).error) {
+        alert((exerciseDescription as DefaultResponceType).message);
+      } else {
+        newExercise.description = exerciseDescription as ExerciseDescriptionType
+      }
+
+      this.exercisesCompare[requieredExercise.id] = exerciseDescription as ExerciseDescriptionType
+    } else {
+
+      newExercise.id = `ex${(this.allExercises.length + this.exercises.length - Object.keys(this.exercisesCompare).length + 1).toString().padStart(4, '0')}`;
+      
+    }
+
+   
+
+    console.log(newExercise)
     this.sessionStorageService.saveExercises(this.exercises);
     this.exercises.push(newExercise);
     this.newExerciseName = '';
@@ -97,8 +116,7 @@ export class TrainingComponent implements OnInit {
     const exercise = this.exercises.find(item => item.id === id);
     if(exercise) {
       this.exercises.splice(this.exercises.indexOf(exercise), 1);
-      const compIndex = this.exercisesCompare.indexOf(exercise);
-      if(compIndex > -1) this.exercisesCompare.splice(compIndex, 1)
+      delete this.exercisesCompare[exercise.id];
 
       this.sessionStorageService.saveExercises(this.exercises);
       this.sessionStorageService.saveExercisesCompare(this.exercisesCompare);
@@ -110,23 +128,25 @@ export class TrainingComponent implements OnInit {
   finishTrain(): void {
     this.exercises.forEach(exercise => {
       const newHistory: ExerciseHistoryType = { date:  `${this.date.getMonth() + 1}.${this.date.getDate()}.${this.date.getFullYear()}` };
-      const compare = this.exercisesCompare.find(compare => compare.id === exercise.id);
+      const compare = this.exercisesCompare[exercise.id]
       if (compare) {
-        if (exercise.repeats !== compare.repeats) newHistory.repeats = exercise.repeats
-        if (exercise.weight !== compare.weight) newHistory.weight = exercise.weight
-        if (exercise.comment !== compare.comment) newHistory.comment = exercise.comment
+        if (exercise.description.repeats !== compare.repeats) newHistory.repeats = exercise.description.repeats
+        if (exercise.description.weight !== compare.weight) newHistory.weight = exercise.description.weight
+        if (exercise.description.comment !== compare.comment) newHistory.comment = exercise.description.comment
       } else {
-        newHistory.repeats = exercise.repeats
-        newHistory.weight = exercise.weight
-        newHistory.comment = exercise.comment
-        this.localStorageService.updateAllExercises({ id: exercise.id, name: exercise.name });
+        newHistory.repeats = exercise.description.repeats
+        newHistory.weight = exercise.description.weight
+        newHistory.comment = exercise.description.comment
+        this.localStorageService.updateAllExercises(exercise.id, exercise.name);
+        this.localStorageService.updateExerciseGroups(exercise.group, exercise.id);
       }
+      console.log(newHistory)
       if (newHistory.repeats || newHistory.comment || newHistory.weight || !compare) {
         this.localStorageService.updateExerciseHistory(newHistory, { id: exercise.id, name: exercise.name })
       }
     })
     sessionStorage.clear();
     this.exercises = [];
-    this.exercisesCompare = []
+    this.exercisesCompare = {}
   }
 }

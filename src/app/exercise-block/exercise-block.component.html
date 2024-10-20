@@ -1,22 +1,23 @@
 <div class="exercise block">
     
     <div class="exercise-info glass glare">
-        <div class="exercise-info-last-train">{{structure.lastTrain | date : 'dd MMMM yyyy'}}</div>
+        <div class="exercise-info-last-train">{{structure.description.lastTrain| date : 'dd MMMM yyyy'}}</div>
+        <div class="exercise-info-group">{{structure.group}}</div>
         <div class="exercise-info-name">{{structure.name}}</div>
     </div>
     <div class="exercise-set">
         <mat-form-field class="exercise-set-form-field">
             <mat-label>Weight</mat-label>
-            <input matInput type="number" min="0" step="0.25" [(ngModel)]="structure.weight">
+            <input matInput type="number" min="0" step="0.25" [(ngModel)]="structure.description.weight">
         </mat-form-field>
         <mat-form-field class="exercise-set-form-field">
             <mat-label>Repeats</mat-label>
-            <input matInput type="number" min="0" [(ngModel)]="structure.repeats">
+            <input matInput type="number" min="0" [(ngModel)]="structure.description.repeats">
         </mat-form-field>
     </div>
 
     <div class="exercise-comment insert">
-        <textarea [(ngModel)]="structure.comment" class="exercise-comment-textarea" placeholder="Comment..."></textarea>
+        <textarea [(ngModel)]="structure.description.comment" class="exercise-comment-textarea" placeholder="Comment..."></textarea>
     </div>
 
     <div class="exercise-delete glass" (click)="openDialog()">

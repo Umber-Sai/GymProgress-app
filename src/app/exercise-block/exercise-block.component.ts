@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ExerciseType } from '../type/exercise.type';
-import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../shared/popup/popup.component';
 

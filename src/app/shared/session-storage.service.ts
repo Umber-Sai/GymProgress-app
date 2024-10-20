@@ -22,14 +22,14 @@ export class SessionStorageService {
     return []
   }
 
-  saveExercisesCompare(exercisesCompare: ExerciseCompareType[]) : void {
+  saveExercisesCompare(exercisesCompare: ExerciseCompareType) : void {
     sessionStorage.setItem(this.exercisesCompareKey, JSON.stringify(exercisesCompare));
   }
 
-  getExercisesCompare() : ExerciseCompareType[] {
+  getExercisesCompare() : ExerciseCompareType {
     const exercisesCompare = sessionStorage.getItem(this.exercisesCompareKey);
     if(exercisesCompare) return JSON.parse(exercisesCompare);
-    return []
+    return {}
   }
 
  

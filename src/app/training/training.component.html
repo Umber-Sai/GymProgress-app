@@ -11,7 +11,8 @@
         <div class="add-exercise block">
             <button class="add-exercise-btn btn glass glare" (click)="openDialog()">finish</button>
             <mat-form-field class="add-exercise-form-control">
-                <input matInput type="text" [(ngModel)]="newExerciseName"  [matAutocomplete]="auto" (ngModelChange)="filterExercises($event)">
+                <input matInput type="text" [(ngModel)]="newExerciseName"  (ngModelChange)="filterExercises($event)">
+                <!-- <input matInput type="text" [(ngModel)]="newExerciseName"  [matAutocomplete]="auto" (ngModelChange)="filterExercises($event)"> -->
                 <mat-autocomplete #auto="matAutocomplete" >
                     <mat-option *ngFor="let option of filteredOptions" [value]="option.name">
                       {{option.name}}

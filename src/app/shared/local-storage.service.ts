@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import {ExerciseType, ExreciseNameIdType } from '../type/exercise.type';
+import {ExerciseDescriptionType, ExerciseType, ExreciseNameIdType } from '../type/exercise.type';
 import { DefaultResponceType } from '../type/default-responce.type';
 import { ExerciseHistoryType } from '../type/exercise-history.type';
+import { defaultAllExercises, defaultExerciseGroups } from './defaultValues';
+import { ExercisesGroupsType } from '../type/exercise-groups.type';
 
 @Injectable({
   providedIn: 'root'
@@ -9,23 +11,48 @@ import { ExerciseHistoryType } from '../type/exercise-history.type';
 export class LockalStorageService {
   
   private allExercisesKey: string = 'allExercises'
+  private exerciseGroupsKey: string = 'exerciseGroups'
   constructor() {}
 
   getAllExercises(): ExreciseNameIdType[] {
     const string = localStorage.getItem(this.allExercisesKey);
-    if (string) return JSON.parse(string)
-    this.setAllExercises([]);
-    return []
+    if (string) return JSON.parse(string);
+    this.setAllExercises(defaultAllExercises);
+    return defaultAllExercises
   }
  
   setAllExercises(allExercises: ExreciseNameIdType[]): void {
     localStorage.setItem(this.allExercisesKey, JSON.stringify(allExercises));
   }
 
+  updateAllExercises(exerciseId : string, exerciseName: string): void {
+    const allExercises = this.getAllExercises();
+    allExercises.push({id : exerciseId, name: exerciseName});
+    this.setAllExercises(allExercises);
+  }
+
+  getExerciseGroups(): ExercisesGroupsType {
+    const string = localStorage.getItem(this.exerciseGroupsKey);
+    if (string) return JSON.parse(string);
+    this.setExerciseGroups(defaultExerciseGroups);
+    return defaultExerciseGroups
+  }
+
+  setExerciseGroups (exerciseGroups: ExercisesGroupsType): void {
+    localStorage.setItem(this.exerciseGroupsKey, JSON.stringify(exerciseGroups));
+  }
+
+  updateExerciseGroups(group: string, exerciseId : string): void {
+    const exerciseGroups = this.getExerciseGroups();
+    exerciseGroups[group].push(exerciseId);
+    this.setExerciseGroups(exerciseGroups);
+  }
+
+
   getExerciseHistory(exercise: ExreciseNameIdType): ExerciseHistoryType[] | DefaultResponceType {
     const string = localStorage.getItem(exercise.id);
     if (string) return JSON.parse(string);
-    return { error: true, message: 'exercise "' + exercise.name + '" not found' }
+    return { error: true, message: 'History of exercise "' + exercise.name + '" not found' }
   }
 
   setExerciseHistory(id: string, history: ExerciseHistoryType[]): void {
@@ -43,13 +70,9 @@ export class LockalStorageService {
     this.setExerciseHistory(exercise.id, history as ExerciseHistoryType[])
   }
 
-  updateAllExercises(exercise : ExreciseNameIdType): void {
-    const allExercises = this.getAllExercises();
-    allExercises.push(exercise);
-    this.setAllExercises(allExercises);
-  }
+ 
 
-  collectExerciseDescriprion(exercise: ExreciseNameIdType, date: string | null = null): ExerciseType | DefaultResponceType {
+  collectExerciseDescriprion(exercise: ExreciseNameIdType, date: string | null = null): ExerciseDescriptionType | DefaultResponceType {
     let history: ExerciseHistoryType[] | DefaultResponceType = this.getExerciseHistory(exercise);
     if ((history as DefaultResponceType).error) return history as DefaultResponceType;
     let storage = history as ExerciseHistoryType[];
@@ -60,9 +83,7 @@ export class LockalStorageService {
       storage = storage.slice(0, index + 1);  //splice or slice??
     }
     return {
-      id: exercise.id,
       lastTrain: storage.at(-1)!.date,
-      name: exercise.name,
       weight: storage.filter(item => item.hasOwnProperty('weight')).at(-1)!.weight!,
       repeats: storage.filter(item => item.hasOwnProperty('repeats')).at(-1)!.repeats!,
       comment: storage.filter(item => item.hasOwnProperty('comment')).at(-1)!.comment!,
