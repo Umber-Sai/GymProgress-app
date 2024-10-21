@@ -1,3 +1,3 @@
-export type ExercisesGroupsType = {
+export type ExerciseGroupsType = {
     [key : string] : string[]
 }

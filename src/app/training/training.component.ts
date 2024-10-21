@@ -1,13 +1,15 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ExerciseDescriptionType, ExerciseType, ExreciseNameIdType } from '../type/exercise.type';
-import { LockalStorageService } from '../shared/local-storage.service';
+import { LocalStorageService } from '../shared/local-storage.service';
 import { DefaultResponceType } from '../type/default-responce.type';
 import { SessionStorageService } from '../shared/session-storage.service';
 import { ExerciseCompareType } from '../type/exercise-compare.type';
 import { ExerciseHistoryType } from '../type/exercise-history.type';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../shared/popup/popup.component';
-import { ExercisesGroupsType } from '../type/exercise-groups.type';
+import { ExerciseGroupsType } from '../type/exercise-groups.type';
+import { GroupManagerService } from '../shared/group-manager.service';
+import { AutoCompliterType } from '../type/autocompleter.type';
 
 @Component({
   selector: 'app-training',
@@ -23,13 +25,13 @@ export class TrainingComponent implements OnInit {
 
   date = new Date();
 
-  allExercises: ExreciseNameIdType[] = this.localStorageService.getAllExercises();
-  exerciseGroups: ExercisesGroupsType = this.localStorageService.getExerciseGroups();
-  filteredOptions: ExreciseNameIdType[] = this.allExercises;
+  autoCompliterOptions: AutoCompliterType = this.groupManager.filterExercises('');
+
 
   constructor(
-    private localStorageService: LockalStorageService,
+    private localStorageService: LocalStorageService,
     private sessionStorageService: SessionStorageService,
+    private groupManager: GroupManagerService,
     private dialog : MatDialog,
   ) {
   }
@@ -57,7 +59,7 @@ export class TrainingComponent implements OnInit {
   }
 
   filterExercises(val: string): void {
-    this.filteredOptions = this.allExercises.filter(item => item.name.toLowerCase().includes(val.toLowerCase()));
+    this.autoCompliterOptions = this.groupManager.filterExercises(val);
   }
 
 
@@ -80,15 +82,13 @@ export class TrainingComponent implements OnInit {
     }
     
 
-    const requieredExercise = this.allExercises.find((item : ExreciseNameIdType) => item.name === this.newExerciseName);
+    const requieredExercise = this.groupManager.findExerciseByName(this.newExerciseName);
     if (requieredExercise) {
 
       newExercise.id = requieredExercise.id
 
-      let exerciseGroup = Object.keys(this.exerciseGroups).find(group => {
-        return this.exerciseGroups[group].includes(requieredExercise.id)
-      });
-      if(exerciseGroup) newExercise.group = exerciseGroup
+      let exerciseGroup = this.groupManager.findGroup(requieredExercise.id)
+      if(exerciseGroup) newExercise.group = exerciseGroup;
 
       const exerciseDescription = this.localStorageService.collectExerciseDescriprion(requieredExercise);
       if ((exerciseDescription as DefaultResponceType).error) {
@@ -100,8 +100,8 @@ export class TrainingComponent implements OnInit {
       this.exercisesCompare[requieredExercise.id] = exerciseDescription as ExerciseDescriptionType
     } else {
 
-      newExercise.id = `ex${(this.allExercises.length + this.exercises.length - Object.keys(this.exercisesCompare).length + 1).toString().padStart(4, '0')}`;
-      
+      newExercise.id = `ex${(this.groupManager.exerciseLength + this.exercises.length - Object.keys(this.exercisesCompare).length + 1).toString().padStart(4, '0')}`;
+
     }
 
    

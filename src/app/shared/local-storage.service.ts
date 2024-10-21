@@ -3,12 +3,12 @@ import {ExerciseDescriptionType, ExerciseType, ExreciseNameIdType } from '../typ
 import { DefaultResponceType } from '../type/default-responce.type';
 import { ExerciseHistoryType } from '../type/exercise-history.type';
 import { defaultAllExercises, defaultExerciseGroups } from './defaultValues';
-import { ExercisesGroupsType } from '../type/exercise-groups.type';
+import { ExerciseGroupsType } from '../type/exercise-groups.type';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LockalStorageService {
+export class LocalStorageService {
   
   private allExercisesKey: string = 'allExercises'
   private exerciseGroupsKey: string = 'exerciseGroups'
@@ -31,14 +31,14 @@ export class LockalStorageService {
     this.setAllExercises(allExercises);
   }
 
-  getExerciseGroups(): ExercisesGroupsType {
+  getExerciseGroups(): ExerciseGroupsType {
     const string = localStorage.getItem(this.exerciseGroupsKey);
     if (string) return JSON.parse(string);
     this.setExerciseGroups(defaultExerciseGroups);
     return defaultExerciseGroups
   }
 
-  setExerciseGroups (exerciseGroups: ExercisesGroupsType): void {
+  setExerciseGroups (exerciseGroups: ExerciseGroupsType): void {
     localStorage.setItem(this.exerciseGroupsKey, JSON.stringify(exerciseGroups));
   }
 
