@@ -7,7 +7,6 @@ import { ExerciseCompareType } from '../type/exercise-compare.type';
 import { ExerciseHistoryType } from '../type/exercise-history.type';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../shared/popup/popup.component';
-import { ExerciseGroupsType } from '../type/exercise-groups.type';
 import { GroupManagerService } from '../shared/group-manager.service';
 import { AutoCompliterType } from '../type/autocompleter.type';
 
@@ -148,5 +147,17 @@ export class TrainingComponent implements OnInit {
     sessionStorage.clear();
     this.exercises = [];
     this.exercisesCompare = {}
+  }
+
+  openDialogClear() : void {
+    const dialogRef = this.dialog.open(PopupComponent, {data : 'Delete this exercise?'});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result) {
+        console.log('clear')
+        localStorage.clear();
+        sessionStorage.clear()
+      }
+    });
   }
 }
