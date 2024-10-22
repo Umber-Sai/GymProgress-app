@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import {ExerciseDescriptionType, ExerciseType, ExreciseNameIdType } from '../type/exercise.type';
-import { DefaultResponceType } from '../type/default-responce.type';
-import { ExerciseHistoryType } from '../type/exercise-history.type';
+import { ExreciseNameIdType } from '../../type/exercise.type';
+import { DefaultResponceType } from '../../type/default-responce.type';
+import { ExerciseHistoryType } from '../../type/exercise-history.type';
 import { defaultAllExercises, defaultExerciseGroups } from './defaultValues';
-import { ExerciseGroupsType } from '../type/exercise-groups.type';
+import { ExerciseGroupsType } from '../../type/exercise-groups.type';
+import { TrainingHistoryType } from '../../type/train-history.type';
+
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +14,7 @@ export class LocalStorageService {
   
   private allExercisesKey: string = 'allExercises'
   private exerciseGroupsKey: string = 'exerciseGroups'
+  private trainingHistoryKey: string = 'trainingHistory'
   constructor() {}
 
   getAllExercises(): ExreciseNameIdType[] {
@@ -70,24 +73,21 @@ export class LocalStorageService {
     this.setExerciseHistory(exercise.id, history as ExerciseHistoryType[])
   }
 
- 
+  getTrainingHistory () : TrainingHistoryType[] {
+    const trainingHistory = localStorage.getItem(this.trainingHistoryKey);
+    if(trainingHistory) return JSON.parse(trainingHistory);
+    this.setTrainingHistory([]);
+    return []
+  }
 
-  collectExerciseDescriprion(exercise: ExreciseNameIdType, date: string | null = null): ExerciseDescriptionType | DefaultResponceType {
-    let history: ExerciseHistoryType[] | DefaultResponceType = this.getExerciseHistory(exercise);
-    if ((history as DefaultResponceType).error) return history as DefaultResponceType;
-    let storage = history as ExerciseHistoryType[];
-    if (date) {
-      const lastRecord = storage.find(item => item.date === date);
-      if (!lastRecord) return { error: true, message: 'No records in this date' }
-      const index = storage.indexOf(lastRecord);
-      storage = storage.slice(0, index + 1);  //splice or slice??
-    }
-    return {
-      lastTrain: storage.at(-1)!.date,
-      weight: storage.filter(item => item.hasOwnProperty('weight')).at(-1)!.weight!,
-      repeats: storage.filter(item => item.hasOwnProperty('repeats')).at(-1)!.repeats!,
-      comment: storage.filter(item => item.hasOwnProperty('comment')).at(-1)!.comment!,
-    }
+  setTrainingHistory (trainingHistory : TrainingHistoryType[]) {
+    localStorage.setItem(this.trainingHistoryKey, JSON.stringify(trainingHistory));
+  }
+
+  updateTrainingHistory (newTrainHistory : TrainingHistoryType) {
+    const trainingHistory : TrainingHistoryType[] = this.getTrainingHistory();
+    trainingHistory.unshift(newTrainHistory);
+    this.setTrainingHistory(trainingHistory);
   }
 }
 

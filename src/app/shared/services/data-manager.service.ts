@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
 import { LocalStorageService } from './local-storage.service';
-import { ExerciseGroupsType } from '../type/exercise-groups.type';
-import { ExreciseNameIdType } from '../type/exercise.type';
-import { AutoCompliterType } from '../type/autocompleter.type';
+import { ExerciseGroupsType } from '../../type/exercise-groups.type';
+import { ExerciseDescriptionType, ExreciseNameIdType } from '../../type/exercise.type';
+import { AutoCompliterType } from '../../type/autocompleter.type';
+import { ExerciseHistoryType } from '../../type/exercise-history.type';
+import { DefaultResponceType } from '../../type/default-responce.type';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GroupManagerService {
+export class DataManagerService {
 
 
-  groupsExerciseId : ExerciseGroupsType = this.localStorageService.getExerciseGroups();
-  groups : string[] = Object.keys(this.groupsExerciseId)
-  allExercises : ExreciseNameIdType[] = this.localStorageService.getAllExercises();
+  private groupsExerciseId : ExerciseGroupsType = this.localStorageService.getExerciseGroups();
+  private groups : string[] = Object.keys(this.groupsExerciseId)
+  private allExercises : ExreciseNameIdType[] = this.localStorageService.getAllExercises();
 
   exercisesData : {group : string, exercises : string[]}[] = [];
 
@@ -23,7 +25,7 @@ export class GroupManagerService {
     this.initExerciseData()
   }
 
-  initExerciseData () {
+  private initExerciseData () {
     this.groups.forEach(group => {
       let exercises : string[] = []
       this.groupsExerciseId[group].forEach(exerciseId => {
@@ -71,6 +73,24 @@ export class GroupManagerService {
 
   get exerciseLength () : number {
     return this.allExercises.length
+  }
+
+  collectExerciseDescriprion(exercise: ExreciseNameIdType, date: string | null = null): ExerciseDescriptionType | DefaultResponceType {
+    let history: ExerciseHistoryType[] | DefaultResponceType = this.localStorageService.getExerciseHistory(exercise);
+    if ((history as DefaultResponceType).error) return history as DefaultResponceType;
+    let storage = history as ExerciseHistoryType[];
+    if (date) {
+      const lastRecord = storage.find(item => item.date === date);
+      if (!lastRecord) return { error: true, message: 'No records in this date' }
+      const index = storage.indexOf(lastRecord);
+      storage = storage.slice(0, index + 1);  //splice or slice??
+    }
+    return {
+      lastTrain: storage.at(-1)!.date,
+      weight: storage.filter(item => item.hasOwnProperty('weight')).at(-1)!.weight!,
+      repeats: storage.filter(item => item.hasOwnProperty('repeats')).at(-1)!.repeats!,
+      comment: storage.filter(item => item.hasOwnProperty('comment')).at(-1)!.comment!,
+    }
   }
 
 }

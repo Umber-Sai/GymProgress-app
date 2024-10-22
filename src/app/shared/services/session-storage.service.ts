@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ExerciseType } from '../type/exercise.type';
-import { ExerciseCompareType } from '../type/exercise-compare.type';
+import { ExerciseCompareType } from 'src/app/type/exercise-compare.type';
+import { ExerciseType } from 'src/app/type/exercise.type';
 
 @Injectable({
   providedIn: 'root'

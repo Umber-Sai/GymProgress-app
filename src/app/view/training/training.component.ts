@@ -1,14 +1,16 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { ExerciseDescriptionType, ExerciseType, ExreciseNameIdType } from '../type/exercise.type';
-import { LocalStorageService } from '../shared/local-storage.service';
-import { DefaultResponceType } from '../type/default-responce.type';
-import { SessionStorageService } from '../shared/session-storage.service';
-import { ExerciseCompareType } from '../type/exercise-compare.type';
-import { ExerciseHistoryType } from '../type/exercise-history.type';
+import { ExerciseDescriptionType, ExerciseType, ExreciseNameIdType } from '../../type/exercise.type';
+import { LocalStorageService } from '../../shared/services/local-storage.service';
+import { DefaultResponceType } from '../../type/default-responce.type';
+import { ExerciseCompareType } from '../../type/exercise-compare.type';
+import { ExerciseHistoryType } from '../../type/exercise-history.type';
 import { MatDialog } from '@angular/material/dialog';
-import { PopupComponent } from '../shared/popup/popup.component';
-import { GroupManagerService } from '../shared/group-manager.service';
-import { AutoCompliterType } from '../type/autocompleter.type';
+import { PopupComponent } from '../../shared/popup/popup.component';
+import { DataManagerService } from '../../shared/services/data-manager.service';
+import { AutoCompliterType } from '../../type/autocompleter.type';
+import { TrainingHistoryType } from '../../type/train-history.type';
+import { SessionStorageService } from 'src/app/shared/services/session-storage.service';
+
 
 @Component({
   selector: 'app-training',
@@ -20,17 +22,17 @@ export class TrainingComponent implements OnInit {
 
   newExerciseName: string = '';
   exercises: ExerciseType[] = [];
-  exercisesCompare: ExerciseCompareType = {}
+  private exercisesCompare: ExerciseCompareType = {}
 
   date = new Date();
 
-  autoCompliterOptions: AutoCompliterType = this.groupManager.filterExercises('');
+  autoCompliterOptions: AutoCompliterType = this.dataManager.filterExercises('');
 
 
   constructor(
     private localStorageService: LocalStorageService,
     private sessionStorageService: SessionStorageService,
-    private groupManager: GroupManagerService,
+    private dataManager: DataManagerService,
     private dialog : MatDialog,
   ) {
   }
@@ -58,17 +60,15 @@ export class TrainingComponent implements OnInit {
   }
 
   filterExercises(val: string): void {
-    this.autoCompliterOptions = this.groupManager.filterExercises(val);
+    this.autoCompliterOptions = this.dataManager.filterExercises(val);
   }
 
 
   addExercise(): void {
     if (this.newExerciseName === '' || this.exercises.some(item => item.name === this.newExerciseName.toLowerCase())) return
-    let newExercise: ExerciseType = {} as ExerciseType;
     this.newExerciseName = this.newExerciseName.toLowerCase()
 
-
-    newExercise = {
+    let newExercise: ExerciseType = {
       id: '',
       name: this.newExerciseName,
       group : 'other',
@@ -79,35 +79,28 @@ export class TrainingComponent implements OnInit {
         comment: '',
       }
     }
-    
-
-    const requieredExercise = this.groupManager.findExerciseByName(this.newExerciseName);
+    const requieredExercise = this.dataManager.findExerciseByName(this.newExerciseName);
     if (requieredExercise) {
 
       newExercise.id = requieredExercise.id
 
-      let exerciseGroup = this.groupManager.findGroup(requieredExercise.id)
+      let exerciseGroup = this.dataManager.findGroup(requieredExercise.id)
       if(exerciseGroup) newExercise.group = exerciseGroup;
 
-      const exerciseDescription = this.localStorageService.collectExerciseDescriprion(requieredExercise);
+      const exerciseDescription = this.dataManager.collectExerciseDescriprion(requieredExercise);
       if ((exerciseDescription as DefaultResponceType).error) {
         alert((exerciseDescription as DefaultResponceType).message);
       } else {
-        newExercise.description = exerciseDescription as ExerciseDescriptionType
+        newExercise.description = exerciseDescription as ExerciseDescriptionType;
+        this.exercisesCompare[requieredExercise.id] = structuredClone(exerciseDescription as ExerciseDescriptionType);
       }
 
-      this.exercisesCompare[requieredExercise.id] = exerciseDescription as ExerciseDescriptionType
     } else {
-
-      newExercise.id = `ex${(this.groupManager.exerciseLength + this.exercises.length - Object.keys(this.exercisesCompare).length + 1).toString().padStart(4, '0')}`;
-
+      newExercise.id = `ex${(this.dataManager.exerciseLength + this.exercises.length - Object.keys(this.exercisesCompare).length + 1).toString().padStart(4, '0')}`;
     }
-
-   
-
-    console.log(newExercise)
-    this.sessionStorageService.saveExercises(this.exercises);
     this.exercises.push(newExercise);
+    this.sessionStorageService.saveExercises(this.exercises);
+    this.sessionStorageService.saveExercisesCompare(this.exercisesCompare);
     this.newExerciseName = '';
   }
 
@@ -125,39 +118,31 @@ export class TrainingComponent implements OnInit {
   }
 
   finishTrain(): void {
+    const today = `${this.date.getMonth() + 1}.${this.date.getDate()}.${this.date.getFullYear()}`
+    let newTrainHistory: TrainingHistoryType = {
+      date : today,
+      exercises : []
+    }
     this.exercises.forEach(exercise => {
-      const newHistory: ExerciseHistoryType = { date:  `${this.date.getMonth() + 1}.${this.date.getDate()}.${this.date.getFullYear()}` };
+      newTrainHistory.exercises.push(exercise.id);
+      const newExerciseHistory: ExerciseHistoryType = { date: today};
       const compare = this.exercisesCompare[exercise.id]
       if (compare) {
-        if (exercise.description.repeats !== compare.repeats) newHistory.repeats = exercise.description.repeats
-        if (exercise.description.weight !== compare.weight) newHistory.weight = exercise.description.weight
-        if (exercise.description.comment !== compare.comment) newHistory.comment = exercise.description.comment
+        if (exercise.description.repeats !== compare.repeats) newExerciseHistory.repeats = exercise.description.repeats
+        if (exercise.description.weight !== compare.weight) newExerciseHistory.weight = exercise.description.weight
+        if (exercise.description.comment !== compare.comment) newExerciseHistory.comment = exercise.description.comment
       } else {
-        newHistory.repeats = exercise.description.repeats
-        newHistory.weight = exercise.description.weight
-        newHistory.comment = exercise.description.comment
+        newExerciseHistory.repeats = exercise.description.repeats
+        newExerciseHistory.weight = exercise.description.weight
+        newExerciseHistory.comment = exercise.description.comment
         this.localStorageService.updateAllExercises(exercise.id, exercise.name);
         this.localStorageService.updateExerciseGroups(exercise.group, exercise.id);
       }
-      console.log(newHistory)
-      if (newHistory.repeats || newHistory.comment || newHistory.weight || !compare) {
-        this.localStorageService.updateExerciseHistory(newHistory, { id: exercise.id, name: exercise.name })
-      }
-    })
+      this.localStorageService.updateExerciseHistory(newExerciseHistory, { id: exercise.id, name: exercise.name })
+    });
+    this.localStorageService.updateTrainingHistory(newTrainHistory);
     sessionStorage.clear();
     this.exercises = [];
     this.exercisesCompare = {}
-  }
-
-  openDialogClear() : void {
-    const dialogRef = this.dialog.open(PopupComponent, {data : 'Delete this exercise?'});
-
-    dialogRef.afterClosed().subscribe(result => {
-      if(result) {
-        console.log('clear')
-        localStorage.clear();
-        sessionStorage.clear()
-      }
-    });
   }
 }

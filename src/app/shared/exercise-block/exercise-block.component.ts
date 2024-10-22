@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ExerciseType } from '../type/exercise.type';
 import { MatDialog } from '@angular/material/dialog';
-import { PopupComponent } from '../shared/popup/popup.component';
+import { ExerciseType } from 'src/app/type/exercise.type';
+import { PopupComponent } from '../popup/popup.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'exercise-block',
@@ -15,6 +16,7 @@ export class ExerciseBlockComponent implements OnInit {
 
   constructor(
     private dialog : MatDialog,
+    private router : Router
   ) { }
 
   ngOnInit(): void {
@@ -28,6 +30,10 @@ export class ExerciseBlockComponent implements OnInit {
         this.deleteExerciseEvent.next(this.structure.id)
       }
     });
+  }
+
+  moveToHistory() {
+    this.router.navigate(['/exercise/' + this.structure.id])
   }
 
 

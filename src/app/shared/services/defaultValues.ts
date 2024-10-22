@@ -1,7 +1,7 @@
+import { ExerciseGroupsType } from "src/app/type/exercise-groups.type"
+import { ExreciseNameIdType } from "src/app/type/exercise.type"
 
 
-import { ExerciseGroupsType } from "../type/exercise-groups.type"
-import { ExreciseNameIdType } from "../type/exercise.type"
 
 export const defaultExerciseGroups: ExerciseGroupsType = {
     chest : [
