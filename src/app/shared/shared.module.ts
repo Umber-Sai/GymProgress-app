@@ -7,12 +7,14 @@ import { ExerciseBlockComponent } from './exercise-block/exercise-block.componen
 import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { FormPopupComponent } from './form-popup/form-popup.component';
 
 
 @NgModule({
   declarations: [
     PopupComponent,
-    ExerciseBlockComponent
+    ExerciseBlockComponent,
+    FormPopupComponent
   ],
   imports: [
     CommonModule,

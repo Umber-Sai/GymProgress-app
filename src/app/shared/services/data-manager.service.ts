@@ -5,91 +5,119 @@ import { ExerciseDescriptionType, ExreciseNameIdType } from '../../type/exercise
 import { AutoCompliterType } from '../../type/autocompleter.type';
 import { ExerciseHistoryType } from '../../type/exercise-history.type';
 import { DefaultResponceType } from '../../type/default-responce.type';
+import { Subject } from 'rxjs';
+import { DataObjectType } from 'src/app/type/data-object.type';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataManagerService {
 
+  private exercisesIdName : DataObjectType = {}
+  $exerciseNameById: Subject<DataObjectType> = new Subject<DataObjectType>() //????
+  get exerciseNameById () {
+    return this.exercisesIdName;
+  }
 
-  private groupsExerciseId : ExerciseGroupsType = this.localStorageService.getExerciseGroups();
-  private groups : string[] = Object.keys(this.groupsExerciseId)
-  private allExercises : ExreciseNameIdType[] = this.localStorageService.getAllExercises();
-
-  exercisesData : {group : string, exercises : string[]}[] = [];
-
+  private exercisesNameId : DataObjectType = {}
+  get exerciseIdByName () {
+    return this.exercisesNameId;
+  }
 
   constructor(
     private localStorageService : LocalStorageService
   ) {
-    this.initExerciseData()
+    this.makeExerciseObjects(this.localStorageService.getAllExercises());
+    this.localStorageService.$allExercises.subscribe(allExercises => this.makeExerciseObjects(allExercises));
   }
 
-  private initExerciseData () {
-    this.groups.forEach(group => {
-      let exercises : string[] = []
-      this.groupsExerciseId[group].forEach(exerciseId => {
-        const name = this.allExercises.find(item => item.id === exerciseId)!.name;
-        if(!name) {
-          console.log('Name of ' + exerciseId + 'not found');
-          return
-        }
-        exercises.push(name)
-      })
-      this.exercisesData.push({
-        group : group,
-        exercises : exercises
-      })
+  private makeExerciseObjects (allExercises : ExreciseNameIdType[]) : void {
+    this.exercisesIdName = {}
+    this.exercisesNameId = {}
+    allExercises.forEach(exercise => {
+      this.exercisesIdName[exercise.id] = exercise.name;
+      this.exercisesNameId[exercise.name] = exercise.id;
     });
-    console.log(this.exercisesData)
+    this.$exerciseNameById.next(this.exercisesIdName)
   }
 
 
-  filterExercises (val: string) : AutoCompliterType {
-    let filteredExercises : AutoCompliterType = [];
-    const suitableGroup = this.groups.filter(group => group.includes(val.toLowerCase()));
-    if(suitableGroup) {
-      suitableGroup.forEach(group => {
-        const exercises = this.exercisesData.find(groups => groups.group === group)?.exercises;
-        if(!exercises) return
-        filteredExercises.push({
-          group : group,
-          exercises : exercises
+  getAllExerciseNames () : string[] {
+    return this.localStorageService.getAllExercises().map(item => item.name);
+  }
+
+  filterExercises (val: string) : AutoCompliterType[] {
+    const exerciseGroupsId : ExerciseGroupsType = this.localStorageService.getExerciseGroups();
+    const groupsIdName : DataObjectType = this.localStorageService.getGroups();
+    let filteredExerciseData : AutoCompliterType[] = [];
+    Object.keys(exerciseGroupsId).forEach(group => {
+      if(groupsIdName[group].includes(val) && exerciseGroupsId[group].length > 0) {
+        filteredExerciseData.unshift({
+          group : groupsIdName[group],
+          exercises : exerciseGroupsId[group].map(exerciseId => this.exerciseNameById[exerciseId])
+        });
+        return
+      }
+
+      const searchedExercises = exerciseGroupsId[group].map(item => this.exercisesIdName[item]).filter(exrcs => exrcs.includes(val));
+      if(searchedExercises.length > 0) {
+        filteredExerciseData.push({
+          group : groupsIdName[group],
+          exercises : searchedExercises
         })
-      });
-    }
-    return filteredExercises;
+      }
+    })
+    return filteredExerciseData
   }
 
-  findGroup(exerciseId : string): string | undefined {
-    return this.groups.find(group => {
-      return this.groupsExerciseId[group].includes(exerciseId);
+
+  findGroup(exerciseId : string): string {
+    const exerciseGroupsId : ExerciseGroupsType = this.localStorageService.getExerciseGroups();
+    const groupsIdName : DataObjectType = this.localStorageService.getGroups();
+    const group = Object.keys(groupsIdName).find(group => {
+      return exerciseGroupsId[group].includes(exerciseId);
     });
+    return group ? group : 'gr0000';
   }
 
-  findExerciseByName (name : string) : ExreciseNameIdType | undefined {
-    return this.allExercises.find((item : ExreciseNameIdType) => item.name === name);
+  get exerciseCount () : number {
+    return Object.keys(this.exercisesIdName).length
   }
 
-  get exerciseLength () : number {
-    return this.allExercises.length
-  }
-
-  collectExerciseDescriprion(exercise: ExreciseNameIdType, date: string | null = null): ExerciseDescriptionType | DefaultResponceType {
-    let history: ExerciseHistoryType[] | DefaultResponceType = this.localStorageService.getExerciseHistory(exercise);
-    if ((history as DefaultResponceType).error) return history as DefaultResponceType;
-    let storage = history as ExerciseHistoryType[];
+  collectExerciseDescriprion(exerciseId: string, date: string | null = null): ExerciseDescriptionType | DefaultResponceType {
+    let history = this.localStorageService.getExerciseHistory(exerciseId);
     if (date) {
-      const lastRecord = storage.find(item => item.date === date);
+      const lastRecord = history.find(item => item.date === date);
       if (!lastRecord) return { error: true, message: 'No records in this date' }
-      const index = storage.indexOf(lastRecord);
-      storage = storage.slice(0, index + 1);  //splice or slice??
+      const index = history.indexOf(lastRecord);
+      history = history.slice(0, index + 1);  //splice or slice??
     }
+    console.log(history)
+    if(history.length === 0) {
+      return { error: true, message: 'No history records' }
+    }
+    return this.takeHistorySlice(history)
+  }
+
+  unzipExerciseHistory(exerciseId: string): ExerciseDescriptionType[] {
+    let history = this.localStorageService.getExerciseHistory(exerciseId);
+    let unzipedHistory: ExerciseDescriptionType[] = []
+    console.log(history)
+    while (history.length > 0) {
+      unzipedHistory.push(this.takeHistorySlice(history));
+      history.shift();
+    }
+
+    return unzipedHistory
+  }
+
+  takeHistorySlice (history : ExerciseHistoryType[]): ExerciseDescriptionType {
     return {
-      lastTrain: storage.at(-1)!.date,
-      weight: storage.filter(item => item.hasOwnProperty('weight')).at(-1)!.weight!,
-      repeats: storage.filter(item => item.hasOwnProperty('repeats')).at(-1)!.repeats!,
-      comment: storage.filter(item => item.hasOwnProperty('comment')).at(-1)!.comment!,
+      lastTrain: history[0]!.date,
+      weight: history.filter(item => item.hasOwnProperty('weight'))[0]!.weight!,
+      repeats: history.filter(item => item.hasOwnProperty('repeats'))[0]!.repeats!,
+      comment: history.filter(item => item.hasOwnProperty('comment'))[0]!.comment!,
     }
   }
 

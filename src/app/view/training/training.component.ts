@@ -26,7 +26,7 @@ export class TrainingComponent implements OnInit {
 
   date = new Date();
 
-  autoCompliterOptions: AutoCompliterType = this.dataManager.filterExercises('');
+  autoCompliterOptions: AutoCompliterType[] = this.dataManager.filterExercises('');
 
 
   constructor(
@@ -65,38 +65,38 @@ export class TrainingComponent implements OnInit {
 
 
   addExercise(): void {
+    console.log(this.exercises)
     if (this.newExerciseName === '' || this.exercises.some(item => item.name === this.newExerciseName.toLowerCase())) return
+    this.autoCompliterOptions = this.dataManager.filterExercises('');
     this.newExerciseName = this.newExerciseName.toLowerCase()
 
     let newExercise: ExerciseType = {
       id: '',
       name: this.newExerciseName,
-      group : 'other',
+      group : 'gr0000',
       description : {
-        lastTrain: `${this.date.getMonth()}.${this.date.getDate()}.${this.date.getFullYear()}`,
+        lastTrain: `${this.date.getMonth() + 1}.${this.date.getDate()}.${this.date.getFullYear()}`,
         weight: '',
         repeats: '',
         comment: '',
       }
     }
-    const requieredExercise = this.dataManager.findExerciseByName(this.newExerciseName);
+    const requieredExercise : string | undefined = this.dataManager.exerciseIdByName[this.newExerciseName]
     if (requieredExercise) {
 
-      newExercise.id = requieredExercise.id
+      newExercise.id = requieredExercise
 
-      let exerciseGroup = this.dataManager.findGroup(requieredExercise.id)
-      if(exerciseGroup) newExercise.group = exerciseGroup;
+      newExercise.group = this.dataManager.findGroup(requieredExercise)
 
-      const exerciseDescription = this.dataManager.collectExerciseDescriprion(requieredExercise);
+      const exerciseDescription : ExerciseDescriptionType | DefaultResponceType = this.dataManager.collectExerciseDescriprion(requieredExercise);
       if ((exerciseDescription as DefaultResponceType).error) {
         alert((exerciseDescription as DefaultResponceType).message);
       } else {
         newExercise.description = exerciseDescription as ExerciseDescriptionType;
-        this.exercisesCompare[requieredExercise.id] = structuredClone(exerciseDescription as ExerciseDescriptionType);
+        this.exercisesCompare[requieredExercise] = structuredClone(exerciseDescription as ExerciseDescriptionType);
       }
-
     } else {
-      newExercise.id = `ex${(this.dataManager.exerciseLength + this.exercises.length - Object.keys(this.exercisesCompare).length + 1).toString().padStart(4, '0')}`;
+      newExercise.id = `ex${(this.dataManager.exerciseCount + this.exercises.length - Object.keys(this.exercisesCompare).length + 1).toString().padStart(4, '0')}`;
     }
     this.exercises.push(newExercise);
     this.sessionStorageService.saveExercises(this.exercises);
@@ -138,7 +138,7 @@ export class TrainingComponent implements OnInit {
         this.localStorageService.updateAllExercises(exercise.id, exercise.name);
         this.localStorageService.updateExerciseGroups(exercise.group, exercise.id);
       }
-      this.localStorageService.updateExerciseHistory(newExerciseHistory, { id: exercise.id, name: exercise.name })
+      this.localStorageService.updateExerciseHistory(newExerciseHistory, exercise.id)
     });
     this.localStorageService.updateTrainingHistory(newTrainHistory);
     sessionStorage.clear();

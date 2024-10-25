@@ -1,10 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { ExreciseNameIdType } from '../../type/exercise.type';
-import { DefaultResponceType } from '../../type/default-responce.type';
 import { ExerciseHistoryType } from '../../type/exercise-history.type';
-import { defaultAllExercises, defaultExerciseGroups } from './defaultValues';
-import { ExerciseGroupsType } from '../../type/exercise-groups.type';
+import { defaultAllExercises, defaultExerciseGroups, defaultGroups } from './defaultValues';
 import { TrainingHistoryType } from '../../type/train-history.type';
+import { Subject } from 'rxjs';
+import { ExerciseGroupsType } from 'src/app/type/exercise-groups.type';
+import { DataObjectType } from 'src/app/type/data-object.type';
+import { DataManagerService } from './data-manager.service';
+
+
 
 
 @Injectable({
@@ -14,8 +18,14 @@ export class LocalStorageService {
   
   private allExercisesKey: string = 'allExercises'
   private exerciseGroupsKey: string = 'exerciseGroups'
+  private groupsKey: string = 'groups'
   private trainingHistoryKey: string = 'trainingHistory'
-  constructor() {}
+
+  public $groups : Subject<DataObjectType> = new Subject<DataObjectType>();
+  public $allExercises : Subject<ExreciseNameIdType[]> = new Subject<ExreciseNameIdType[]>();
+  constructor(
+    private injector: Injector
+  ) {}
 
   getAllExercises(): ExreciseNameIdType[] {
     const string = localStorage.getItem(this.allExercisesKey);
@@ -30,9 +40,21 @@ export class LocalStorageService {
 
   updateAllExercises(exerciseId : string, exerciseName: string): void {
     const allExercises = this.getAllExercises();
-    allExercises.push({id : exerciseId, name: exerciseName});
+    const exerciseExist = allExercises.findIndex(item => item.id === exerciseId);
+    if(exerciseExist > -1) {
+      console.log(exerciseExist)
+      console.log(allExercises)
+      allExercises[exerciseExist].name = exerciseName;
+      console.log(allExercises)
+    } else {
+      allExercises.push({id : exerciseId, name: exerciseName});
+    }
     this.setAllExercises(allExercises);
+    this.$allExercises.next(allExercises);
   }
+
+
+
 
   getExerciseGroups(): ExerciseGroupsType {
     const string = localStorage.getItem(this.exerciseGroupsKey);
@@ -45,33 +67,64 @@ export class LocalStorageService {
     localStorage.setItem(this.exerciseGroupsKey, JSON.stringify(exerciseGroups));
   }
 
-  updateExerciseGroups(group: string, exerciseId : string): void {
+  updateExerciseGroups(groupId: string, exerciseId : string): void {
     const exerciseGroups = this.getExerciseGroups();
-    exerciseGroups[group].push(exerciseId);
+    const dataManagerService = this.injector.get(DataManagerService);
+    const currentGroup : string = dataManagerService.findGroup(exerciseId);
+    if(currentGroup) {
+      console.log(currentGroup)
+      console.log(exerciseGroups[currentGroup])
+      exerciseGroups[currentGroup] = exerciseGroups[currentGroup].filter(item => item != exerciseId);
+    }
+    console.log(exerciseGroups)
+
+    exerciseGroups[groupId].push(exerciseId);
     this.setExerciseGroups(exerciseGroups);
   }
 
 
-  getExerciseHistory(exercise: ExreciseNameIdType): ExerciseHistoryType[] | DefaultResponceType {
-    const string = localStorage.getItem(exercise.id);
+
+
+  getGroups () : DataObjectType {
+    const string = localStorage.getItem(this.groupsKey);
     if (string) return JSON.parse(string);
-    return { error: true, message: 'History of exercise "' + exercise.name + '" not found' }
+    this.setGroups(defaultGroups);
+    return defaultGroups;
+  }
+
+  setGroups (groups: DataObjectType): void {
+    localStorage.setItem(this.groupsKey, JSON.stringify(groups));
+  }
+
+  updateGroups(groupName: string, groupId : string): void {
+    const groups = this.getGroups();
+    groups[groupId] = groupName;
+    this.setGroups(groups);
+    this.$groups.next(groups);
+  }
+
+
+
+
+
+  getExerciseHistory(exerciseId: string): ExerciseHistoryType[] {
+    const string = localStorage.getItem(exerciseId);
+    if (string) return JSON.parse(string);
+    return []
   }
 
   setExerciseHistory(id: string, history: ExerciseHistoryType[]): void {
     localStorage.setItem(id, JSON.stringify(history));
   }
 
-  updateExerciseHistory(newHistory : ExerciseHistoryType, exercise : ExreciseNameIdType) : void {
-    const history = this.getExerciseHistory(exercise);
-    if((history as DefaultResponceType).error) {
-      alert('create new history record');
-      this.setExerciseHistory(exercise.id, [newHistory]);
-      return
-    }
-    (history as ExerciseHistoryType[]).push(newHistory);
-    this.setExerciseHistory(exercise.id, history as ExerciseHistoryType[])
+  updateExerciseHistory(newHistory : ExerciseHistoryType, exerciseId : string) : void {
+    const history : ExerciseHistoryType[] = this.getExerciseHistory(exerciseId);
+    history.unshift(newHistory);
+    this.setExerciseHistory(exerciseId, history)
   }
+
+
+
 
   getTrainingHistory () : TrainingHistoryType[] {
     const trainingHistory = localStorage.getItem(this.trainingHistoryKey);

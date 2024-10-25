@@ -1,8 +1,8 @@
 <div class="exercise block">
     
-    <div class="exercise-info glass glare">
+    <div class="exercise-info glass glare" (click)="changeInfo()">
         <div class="exercise-info-last-train">{{structure.description.lastTrain| date : 'dd MMMM yyyy'}}</div>
-        <div class="exercise-info-group">{{structure.group}}</div>
+        <div class="exercise-info-group">{{groups[structure.group]}}</div>
         <div class="exercise-info-name">{{structure.name}}</div>
     </div>
     <div class="exercise-set">
@@ -32,5 +32,7 @@
 
     
 </div>
+
+
 
 

@@ -1,0 +1,13 @@
+<label>
+    <span>name: </span>
+    <input type="text" name="name" [(ngModel)]="exerciseName">
+</label>
+<label>
+    <span>group: </span>
+    <select [(ngModel)]="exerciseGroupId">
+       <option value="{{id}}" *ngFor="let id of groupsId">{{groups[id]}}</option>
+    </select>
+</label>
+<button (click)="addChanges()">
+    done
+</button>
