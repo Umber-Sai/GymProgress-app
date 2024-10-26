@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { LocalStorageService } from '../services/local-storage.service';
 import { FormPopupComponent } from '../form-popup/form-popup.component';
 import { DataObjectType } from 'src/app/type/data-object.type';
-import { DataManagerService } from '../services/data-manager.service';
 
 
 @Component({
@@ -16,7 +15,8 @@ import { DataManagerService } from '../services/data-manager.service';
 })
 export class ExerciseBlockComponent implements OnInit {
 
-  @Input() structure: ExerciseType = {} as ExerciseType
+  @Input() structure: ExerciseType = {} as ExerciseType;
+  @Input() preview : boolean = false;
   @Output() deleteExerciseEvent: EventEmitter<string> = new EventEmitter<string>();
   groups : DataObjectType = this.localStorageService.getGroups();
 
@@ -24,7 +24,6 @@ export class ExerciseBlockComponent implements OnInit {
     private dialog : MatDialog,
     private router : Router,
     private localStorageService : LocalStorageService,
-    private dataManagerService : DataManagerService,
   ) { }
 
   ngOnInit(): void {
