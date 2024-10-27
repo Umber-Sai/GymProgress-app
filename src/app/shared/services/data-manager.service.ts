@@ -3,7 +3,7 @@ import { LocalStorageService } from './local-storage.service';
 import { ExerciseGroupsType } from '../../type/exercise-groups.type';
 import { ExerciseDescriptionType, ExreciseNameIdType } from '../../type/exercise.type';
 import { AutoCompliterType } from '../../type/autocompleter.type';
-import { ExerciseHistoryType } from '../../type/exercise-history.type';
+import { ExerciseHistoryType, ExerciseSetsType, ExerciseSetType } from '../../type/exercise-history.type';
 import { DefaultResponceType } from '../../type/default-responce.type';
 import { Subject } from 'rxjs';
 import { DataObjectType } from 'src/app/type/data-object.type';
@@ -87,23 +87,19 @@ export class DataManagerService {
 
   collectExerciseDescriprion(exerciseId: string, date: string | null = null): ExerciseDescriptionType | DefaultResponceType {
     let history = this.localStorageService.getExerciseHistory(exerciseId);
+    if(!history) return { error: true, message: 'No history data' }
     if (date) {
-      const lastRecord = history.find(item => item.date === date);
-      if (!lastRecord) return { error: true, message: 'No records in this date' }
-      const index = history.indexOf(lastRecord);
-      history = history.slice(0, index + 1);  //splice or slice??
-    }
-    console.log(history)
-    if(history.length === 0) {
-      return { error: true, message: 'No history records' }
+      const lastRecord = history.findIndex(item => item.lastTrain === date);
+      if (lastRecord === -1) return { error: true, message: 'No records in this date' }
+      // history = history.slice(lastRecord + 1, history.length);  //splice or slice??
     }
     return this.takeHistorySlice(history)
   }
 
   unzipExerciseHistory(exerciseId: string): ExerciseDescriptionType[] {
     let history = this.localStorageService.getExerciseHistory(exerciseId);
+    if(!history) return []
     let unzipedHistory: ExerciseDescriptionType[] = []
-    console.log(history)
     while (history.length > 0) {
       unzipedHistory.push(this.takeHistorySlice(history));
       history.shift();
@@ -112,12 +108,26 @@ export class DataManagerService {
     return unzipedHistory
   }
 
-  takeHistorySlice (history : ExerciseHistoryType[]): ExerciseDescriptionType {
+  takeHistorySlice (history : ExerciseHistoryType): ExerciseDescriptionType {
+
+    const setsCount = history.filter(item => item.hasOwnProperty('setsCount'))[0].setsCount!;
+    const setsList : ExerciseSetsType[] = history.filter(item => item.hasOwnProperty('sets')).map(item => item.sets) as ExerciseSetsType[];
+    let sets : ExerciseSetType[] = [];
+    for (let i = 0; i < setsCount; i++) {
+      const setsByIndex = setsList.filter(item => item[i]).map(item => item[i]); //{w? : '', r? : ''}[]
+      sets.push({
+        w : setsByIndex.find(item => item.w)!.w,
+        r : setsByIndex.find(item => item.r)!.r
+      })
+    }
+
+    // console.log(sets)
+    
     return {
-      lastTrain: history[0]!.date,
-      weight: history.filter(item => item.hasOwnProperty('weight'))[0]!.weight!,
-      repeats: history.filter(item => item.hasOwnProperty('repeats'))[0]!.repeats!,
-      comment: history.filter(item => item.hasOwnProperty('comment'))[0]!.comment!,
+      lastTrain: history[0].lastTrain,
+      setsCount : history.filter(item => item.hasOwnProperty('setsCount'))[0].setsCount!,
+      sets : sets,
+      comment: history.filter(item => item.hasOwnProperty('comment'))[0].comment!,
     }
   }
 

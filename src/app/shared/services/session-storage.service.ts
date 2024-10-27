@@ -8,7 +8,7 @@ import { ExerciseType } from 'src/app/type/exercise.type';
 export class SessionStorageService {
 
   private exercisesKey: string = 'exercises';
-  private exercisesCompareKey: string = 'exercisesCompare';
+  private newExerciseCountKey: string = 'newExerciseCount';
 
   constructor() { }
 
@@ -22,14 +22,14 @@ export class SessionStorageService {
     return []
   }
 
-  saveExercisesCompare(exercisesCompare: ExerciseCompareType) : void {
-    sessionStorage.setItem(this.exercisesCompareKey, JSON.stringify(exercisesCompare));
+  saveNewExerciseCount(newExerciseCount: number) : void {
+    sessionStorage.setItem(this.newExerciseCountKey, JSON.stringify(newExerciseCount));
   }
 
-  getExercisesCompare() : ExerciseCompareType {
-    const exercisesCompare = sessionStorage.getItem(this.exercisesCompareKey);
-    if(exercisesCompare) return JSON.parse(exercisesCompare);
-    return {}
+  getNewExerciseCount() : number {
+    const newExerciseCount = sessionStorage.getItem(this.newExerciseCountKey);
+    if(newExerciseCount) return JSON.parse(newExerciseCount);
+    return 0
   }
 
  

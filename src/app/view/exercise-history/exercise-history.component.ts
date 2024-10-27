@@ -11,7 +11,7 @@ import { ExerciseDescriptionType, ExerciseType } from 'src/app/type/exercise.typ
 })
 export class ExerciseHistoryComponent implements OnInit {
 
-  history : ExerciseType[] = [];
+  history : ExerciseDescriptionType[] = [];
   exerciseName : string = ''
 
   constructor(
@@ -21,20 +21,12 @@ export class ExerciseHistoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      const exerciseId = params['id']
-      // localStorage.setItem(exerciseId, JSON.stringify(defaultHistory));
+      const exerciseId : string = params['id']
+      // localStorage.setItem(exerciseId, JSON.stringify(defaultHistory)); //for tests
 
       this.exerciseName = this.dataManagerService.exerciseNameById[exerciseId];
       if(!this.exerciseName) return
-      const exerciseGtoup = this.dataManagerService.findGroup(exerciseId)
-      this.dataManagerService.unzipExerciseHistory(exerciseId).forEach((item : ExerciseDescriptionType) => {
-        this.history.push({
-          id : exerciseId,
-          name : this.exerciseName,
-          group : exerciseGtoup,
-          description : item
-        })
-      })
+      this.history = this.dataManagerService.unzipExerciseHistory(exerciseId)
 
   })
   }

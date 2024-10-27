@@ -1,32 +1,30 @@
-<div class="training">
-    <div class="container">
-        <div class="training-date block">{{date | date : 'dd MMMM yyyy'}}</div>
+<div class="container">
+    <div class="training-date block head">{{date | date : 'dd MMMM yyyy'}}</div>
 
-        <div class="training-exercises">
+    <div class="training-exercises">
 
-            <exercise-block *ngFor="let exercise of exercises" [structure]="exercise" (deleteExerciseEvent)="deleteExercise($event)"></exercise-block>
-
-        </div>
-
-        <div class="add-exercise block">
-            <button class="add-exercise-btn btn glass glare" (click)="openDialog()">finish</button>
-            <mat-form-field class="add-exercise-form-control">
-                <!-- <input matInput type="text" [(ngModel)]="newExerciseName"  (ngModelChange)="filterExercises($event)"> -->
-                <input matInput type="text" [(ngModel)]="newExerciseName"  [matAutocomplete]="auto" (ngModelChange)="filterExercises($event)">
-                <mat-autocomplete #auto="matAutocomplete" >
-                    <div class="group" *ngFor="let group of autoCompliterOptions">
-                        <span>{{group.group}}</span>
-                        <mat-option *ngFor="let option of group.exercises" [value]="option">
-                            {{option}}
-                          </mat-option>
-                    </div>
-                    
-                </mat-autocomplete>
-            </mat-form-field>
-            <button  class="add-exercise-btn btn glass glare" (click)="addExercise()">add exercise</button>
-            
-        </div>
+        <exercise-block *ngFor="let exercise of exercises" [exercise]="exercise"
+            (deleteExerciseEvent)="deleteExercise($event)"></exercise-block>
 
     </div>
-    
+
+    <div class="add-exercise block">
+        <button class="add-exercise-btn btn glass glare" (click)="openDialog()">finish</button>
+        <mat-form-field class="add-exercise-form-control">
+            <input matInput type="text" [(ngModel)]="newExerciseName" [matAutocomplete]="auto"
+                (ngModelChange)="filterExercises($event)">
+            <mat-autocomplete #auto="matAutocomplete">
+                <div class="group" *ngFor="let group of autoCompliterOptions">
+                    <span>{{group.group}}</span>
+                    <mat-option *ngFor="let option of group.exercises" [value]="option">
+                        {{option}}
+                    </mat-option>
+                </div>
+            </mat-autocomplete>
+        </mat-form-field>
+        <button class="add-exercise-btn btn glass glare" (click)="addExercise()">add exercise</button>
+
+    </div>
+
 </div>
+

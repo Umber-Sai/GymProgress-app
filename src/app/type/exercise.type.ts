@@ -1,17 +1,19 @@
+import { ExerciseSetsType, ExerciseSetType } from "./exercise-history.type"
 
 
 export type ExerciseType = {
     id : string,
     group : string,
     name: string,
-    description : ExerciseDescriptionType
-   
+    description : ExerciseDescriptionType,
+    sets : ExerciseSetType[],
+    comment : string
 }
 
 export type ExerciseDescriptionType = {
     lastTrain : string,
-    weight: string,
-    repeats: string,
+    setsCount : number,
+    sets : ExerciseSetType[],
     comment: string,
 }
 

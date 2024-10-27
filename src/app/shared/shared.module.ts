@@ -8,13 +8,15 @@ import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { FormPopupComponent } from './form-popup/form-popup.component';
+import { SetBlockComponent } from './set-block/set-block.component';
 
 
 @NgModule({
   declarations: [
     PopupComponent,
     ExerciseBlockComponent,
-    FormPopupComponent
+    FormPopupComponent,
+    SetBlockComponent
   ],
   imports: [
     CommonModule,

@@ -2,7 +2,7 @@
     <div class="training-date block">{{exerciseName}}</div>
     <div class="training-exercises">
 
-        <exercise-block *ngFor="let exercise of history" [structure]="exercise" [preview]="true"></exercise-block>
+        <exercise-block *ngFor="let exercise of history" [exerciseDescription]="exercise"></exercise-block>
     
     </div>
 </div>

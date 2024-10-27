@@ -64,24 +64,42 @@ export const defaultAllExercises: ExreciseNameIdType[] = [
 ]
 
 //test
-export const defaultHistory : ExerciseHistoryType[] = [
+export const defaultHistory  : ExerciseHistoryType = [ 
    
     {
-        date : '10.15.2024',
-        comment : 'second comment'
+        lastTrain : '10.15.2024',
+        comment : 'second comment',
+        sets : undefined
     },
     {
-        date : '10.10.2024',
-        repeats : '3',
+        lastTrain : '10.10.2024',
+        setsCount : 4,
+        sets : {
+            '3' : {r : "10", w : "20"},
+        },
     },
     {
-        date : '10.05.2024',
-        weight : '2.2',
+        lastTrain : '10.06.2024',
     },
     {
-        date : '10.01.2024',
-        weight : '1.1',
-        repeats : '1',
+        lastTrain : '10.05.2024',
+        setsCount : 2,
+        sets : {
+            2 : {r : "10", w : "25"},
+        },
+    },
+    {
+        lastTrain : '11.01.2024',
+        comment : 'first comment'
+    },
+    {
+        lastTrain : '10.01.2024',
+        setsCount : 3,
+        sets : {
+            '0' : {r : "10", w : "20"},
+            '1' : {r : "10", w : "20"},
+            '2' : {r : "10", w : "20"},
+        },
         comment : 'first comment'
     },
     

@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
-import { ExreciseNameIdType } from '../../type/exercise.type';
-import { ExerciseHistoryType } from '../../type/exercise-history.type';
+import { ExerciseDescriptionType, ExreciseNameIdType } from '../../type/exercise.type';
+import { ExerciseHistoryFirstItemType, ExerciseHistoryItemType, ExerciseHistoryType } from '../../type/exercise-history.type';
 import { defaultAllExercises, defaultExerciseGroups, defaultGroups } from './defaultValues';
 import { TrainingHistoryType } from '../../type/train-history.type';
 import { Subject } from 'rxjs';
@@ -107,19 +107,23 @@ export class LocalStorageService {
 
 
 
-  getExerciseHistory(exerciseId: string): ExerciseHistoryType[] {
+  getExerciseHistory(exerciseId: string): ExerciseHistoryType | undefined {
     const string = localStorage.getItem(exerciseId);
     if (string) return JSON.parse(string);
-    return []
+    return undefined
   }
 
-  setExerciseHistory(id: string, history: ExerciseHistoryType[]): void {
+  setExerciseHistory(id: string, history: ExerciseHistoryType): void {
     localStorage.setItem(id, JSON.stringify(history));
   }
 
-  updateExerciseHistory(newHistory : ExerciseHistoryType, exerciseId : string) : void {
-    const history : ExerciseHistoryType[] = this.getExerciseHistory(exerciseId);
-    history.unshift(newHistory);
+  updateExerciseHistory(newHistory : ExerciseHistoryItemType | ExerciseHistoryFirstItemType, exerciseId : string) : void {
+    let history : ExerciseHistoryType | undefined = this.getExerciseHistory(exerciseId);
+    if(!history) {
+      history = [newHistory as ExerciseHistoryFirstItemType]
+    } else {
+      history.unshift(newHistory as ExerciseHistoryItemType);
+    }
     this.setExerciseHistory(exerciseId, history)
   }
 

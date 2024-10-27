@@ -8,36 +8,66 @@
     box-sizing: border-box;
     border-radius: 30px;
     text-align: right;
-    display: grid;
-    align-items: center;
-    grid-template-columns: 1fr 180px;
+    // display: grid;
+    // align-items: center;
+    // grid-template-columns: 1fr 180px;
     position: relative;
-    .exercise-info {
-        width: calc(100% - 15px);
-        
-        text-align: left;
-        padding: 10px;
-        box-sizing: border-box;
-        border-radius: 20px;
-        overflow: hidden;
-        position: relative;
-        z-index: 1;
 
-
+    .exercise-head {
         display: flex;
-        flex-direction: column;
+        align-items: center;
         justify-content: space-between;
+        .exercise-info {
+            width: max-content;
+            text-align: left;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+    
+            .exercise-info-name {
+                font-size: 30px;
+                margin-bottom: 5px;
+                font-family: 'Maple', sans-serif;
+            }
+    
+            .exercise-info-main {
+                display: flex;
+                align-items: baseline;
+                justify-content: start;
+                column-gap: 10px;
+                .exercise-info-group {
+                    text-transform: uppercase;
+                }
+            }
+        }
+
+        .exercise-ations {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-grow: 1;
+            .action-btn {
+                width: 35px;
+                aspect-ratio: 1;
+                border-radius: 50%;
+                border: 1px solid #ffb79bab;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
         
-        .exercise-info-last-train {
-            font-size: 8px;
-            // margin-bottom: 5px;
+                svg {
+                    width: 50%;
+                    fill: #ffb79bab;
+                }
+            }
         }
-        .exercise-info-name {
-            font-size: 18px;
-            // margin-bottom: 5px;
-            font-family: 'Maple', sans-serif;
-        }
+
     }
+    
     .exercise-set {
         width: 100%;
         display: flex;
@@ -80,27 +110,7 @@
         }
     }
 
-    .exercise-ations {
-        position: absolute;
-        top: -5px;
-        right: -7px;
-
-        .action-btn {
-            width: 35px;
-            aspect-ratio: 1;
-            border-radius: 50%;
-            border: 1px solid #ffb79bab;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-    
-            svg {
-                width: 50%;
-                fill: #ffb79bab;
-            }
-        }
-    }
+   
     
 
 }
