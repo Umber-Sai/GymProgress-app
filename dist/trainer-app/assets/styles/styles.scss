@@ -1,0 +1,55 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'fonts';
+@import 'glowing-orange';
+@import 'common';
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 50px 0;
+    font-family: Maple, "Helvetica Neue", sans-serif;
+    background: rgb(8,21,27);
+    background: linear-gradient(315deg, rgba(8,21,27,1) 6%, rgba(17,51,66,1) 89%);
+    background-size: cover;
+    color: #bbb;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 380px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+
+
+
+::ng-deep {
+    .mat-form-field .mat-form-field-label  {
+        color: #bbb;
+    }
+
+    .mat-form-field .mat-form-field-ripple {
+        background-color: #bbb;
+    }
+
+    .mat-form-field.mat-focused .mat-form-field-label,
+    .mat-form-field.mat-focused input {
+        color: #ffb89b;
+        caret-color : #ffb89b;
+    }
+
+    .mat-form-field.mat-focused .mat-form-field-ripple {
+        background-color: #ffb89b;
+    }
+
+    .mat-form-field-appearance-legacy .mat-form-field-underline {
+        background-color: #bbb;
+    }
+}
+
+
+
