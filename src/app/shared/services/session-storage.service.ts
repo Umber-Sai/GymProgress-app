@@ -8,7 +8,7 @@ import { ExerciseType } from 'src/app/type/exercise.type';
 export class SessionStorageService {
 
   private exercisesKey: string = 'exercises';
-  private newExerciseCountKey: string = 'newExerciseCount';
+  private newExerciseIdKey: string = 'newExerciseId';
 
   constructor() { }
 
@@ -22,14 +22,29 @@ export class SessionStorageService {
     return []
   }
 
-  saveNewExerciseCount(newExerciseCount: number) : void {
-    sessionStorage.setItem(this.newExerciseCountKey, JSON.stringify(newExerciseCount));
+
+
+
+  setNewExercisesId(newExerciseIdArray: string[]) : void {
+    sessionStorage.setItem(this.newExerciseIdKey, JSON.stringify(newExerciseIdArray));
   }
 
-  getNewExerciseCount() : number {
-    const newExerciseCount = sessionStorage.getItem(this.newExerciseCountKey);
-    if(newExerciseCount) return JSON.parse(newExerciseCount);
-    return 0
+  getNewExercisesId() : string[] {
+    const idString = sessionStorage.getItem(this.newExerciseIdKey);
+    if(idString) return JSON.parse(idString);
+    return []
+  }
+
+  addNewExercisesId(newExerciseId : string) {
+    const exerciseIdArray : string[] = this.getNewExercisesId();
+    exerciseIdArray.push(newExerciseId);
+    this.setNewExercisesId(exerciseIdArray);
+  }
+
+  removeNewExercisesId(exerciseId : string) {
+    const exerciseIdArray : string[] = this.getNewExercisesId();
+    const newArray = exerciseIdArray.filter(item => item != exerciseId);
+    this.setNewExercisesId(newArray);
   }
 
  

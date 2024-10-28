@@ -34,6 +34,7 @@ export class TrainingComponent implements OnInit {
     private dataManager: DataManagerService,
     private dialog: MatDialog,
   ) {
+    this.dataManager.generateExerciseId()
   }
 
 
@@ -98,9 +99,8 @@ export class TrainingComponent implements OnInit {
       }
 
     } else {
-      const newExerciseCount = this.sessionStorageService.getNewExerciseCount()
-      newExercise.id = `ex${(this.dataManager.exerciseCount + this.exercises.length - newExerciseCount + 1).toString().padStart(4, '0')}`;
-      this.sessionStorageService.saveNewExerciseCount(newExerciseCount + 1)
+      newExercise.id = this.dataManager.generateExerciseId();
+      this.sessionStorageService.addNewExercisesId(newExercise.id)
     }
     this.exercises.push(newExercise);
     this.sessionStorageService.saveExercises(this.exercises);
@@ -112,9 +112,8 @@ export class TrainingComponent implements OnInit {
     if (exercise) {
       this.exercises.splice(this.exercises.indexOf(exercise), 1);
       this.sessionStorageService.saveExercises(this.exercises);
-      if (this.dataManager.exerciseNameById[exercise.id]) {
-        const newExerciseCount = this.sessionStorageService.getNewExerciseCount();
-        this.sessionStorageService.saveNewExerciseCount(newExerciseCount - 1)
+      if (!this.dataManager.exerciseNameById[exercise.id]) {
+        this.sessionStorageService.removeNewExercisesId(exercise.id)
       }
 
     } else {

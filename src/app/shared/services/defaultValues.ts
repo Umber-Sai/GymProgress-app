@@ -21,7 +21,7 @@ export const defaultExerciseGroups: ExerciseGroupsType = {
         'ex0004'
     ],
     gr0005 : [
-        'ex0005'
+        'ex0007'
     ],
     gr0000 : []
 
@@ -54,7 +54,7 @@ export const defaultAllExercises: ExreciseNameIdType[] = [
         name: 'dumbbell side raise'
     },
     {
-        id: 'ex0005',
+        id: 'ex0007',
         name : 'lat pulldown'
     },
     {
