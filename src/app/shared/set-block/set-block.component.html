@@ -1,5 +1,5 @@
 
-<div class="exercise-set" #set
+<div class="exercise-set" #set [ngClass]="{disabled : !values}"
 (touchstart)="onTouchStart($event, set)"
 (touchmove)="onTouchMove($event, set)"
 (touchend)="onTouchEnd($event, set)"

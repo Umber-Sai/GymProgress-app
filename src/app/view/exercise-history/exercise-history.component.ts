@@ -25,7 +25,9 @@ export class ExerciseHistoryComponent implements OnInit {
       // localStorage.setItem(exerciseId, JSON.stringify(defaultHistory)); //for tests
 
       this.exerciseName = this.dataManagerService.exerciseNameById[exerciseId];
-      if(!this.exerciseName) return
+      if(!this.exerciseName) {
+        this.exerciseName = 'History is empty'
+      }
       this.history = this.dataManagerService.unzipExerciseHistory(exerciseId)
 
   })

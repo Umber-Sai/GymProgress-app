@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { FormPopupComponent } from './form-popup/form-popup.component';
 import { SetBlockComponent } from './set-block/set-block.component';
+import { ClearComponent } from './clear/clear.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { SetBlockComponent } from './set-block/set-block.component';
     PopupComponent,
     ExerciseBlockComponent,
     FormPopupComponent,
-    SetBlockComponent
+    SetBlockComponent,
+    ClearComponent
   ],
   imports: [
     CommonModule,
