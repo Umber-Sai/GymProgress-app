@@ -59,9 +59,10 @@ export class ExerciseBlockComponent implements OnInit {
       let set = this.exercise.description.sets.at(-1)!;
       if(this.exercise.sets.at(-1)!.r) set.r = this.exercise.sets.at(-1)!.r;
       if(this.exercise.sets.at(-1)!.w) set.w = this.exercise.sets.at(-1)!.w;
-      this.exercise.sets.push(set);
+      this.exercise.sets.push(structuredClone(set));
     } else {
-      this.exercise.sets.push(this.exercise.sets.at(-1)!);
+      if(!this.exercise.sets.at(-1)!.r && !this.exercise.sets.at(-1)!.w) return
+      this.exercise.sets.push(structuredClone(this.exercise.sets.at(-1)!));
     }
   }
 

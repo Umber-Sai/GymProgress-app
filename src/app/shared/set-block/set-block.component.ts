@@ -14,7 +14,8 @@ export class SetBlockComponent implements OnInit {
   @Output() deleteSet : EventEmitter<boolean> = new EventEmitter<boolean>()
   positionX = 0;
   offsetX = 0;
-  carouselScroll : boolean = false;
+  isMoove : boolean = false;
+
 
 
   constructor() { }
@@ -36,22 +37,30 @@ export class SetBlockComponent implements OnInit {
             const offsetY = event.touches[0].clientY - initY;
             const offsetX = event.touches[0].clientX - initX;
             const corner = Math.atan(Math.abs(offsetY) / Math.abs(offsetX)) * 180 / Math.PI;
-            if (corner < 30) {
+            if (corner < 20) {
                 event.preventDefault()
-                this.carouselScroll = true;
+                this.isMoove = true;
             }
         }, { once: true, passive : false })
     }, 0)
   }
 
   onTouchMove(event: TouchEvent, target : HTMLElement) {
-    if(!this.carouselScroll || this.disabled || !this.values) return
+    if(!this.isMoove || this.disabled || !this.values) return
     event.preventDefault(); // предотвращает прокрутку страницы при движении
 
     const touch = event.touches[0];
     this.positionX = touch.clientX - this.offsetX;
     // Обновляем позицию элемента
+    if(this.positionX < -150) this.positionX = -150;
+    if(this.positionX > 0) this.positionX = 0;
+
     target.style.transform = `translateX(${this.positionX}px)`;
+
+    this.isMoove = false;
+    setTimeout(()=> {
+      this.isMoove = true;
+    }, 20)
   }
 
   onTouchEnd(event: TouchEvent, target : HTMLElement) {
@@ -62,7 +71,7 @@ export class SetBlockComponent implements OnInit {
       this.deleteSet.next(true);
     } 
     this.positionX = 0
-    this.carouselScroll = false;
+    this.isMoove = false;
   }
 
 

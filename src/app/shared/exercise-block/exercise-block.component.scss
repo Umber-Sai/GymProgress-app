@@ -69,6 +69,7 @@
 
     }
     .exercise-sets {
+        margin: 20px 0;
         .exercise-add-set {
             aspect-ratio: 3/1;
             height: 40px;
@@ -76,7 +77,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 5px 10px 20px auto;
+            margin: 20px 10px 20px auto;
         }
     }
 
