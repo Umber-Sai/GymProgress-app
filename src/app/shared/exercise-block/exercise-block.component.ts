@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { LocalStorageService } from '../services/local-storage.service';
 import { FormPopupComponent } from '../form-popup/form-popup.component';
 import { DataObjectType } from 'src/app/type/data-object.type';
+import { ExerciseSetType } from 'src/app/type/exercise-history.type';
 
 
 @Component({
@@ -52,7 +53,16 @@ export class ExerciseBlockComponent implements OnInit {
 
   addSet() : void {
     if(!this.exercise) return
-    this.exercise.sets.push({w : '', r : ''})
+    if(this.exercise.description.sets.length > this.exercise.sets.length || this.exercise.sets.length === 0) {
+      this.exercise.sets.push({w : '', r : ''});
+    } else if (this.exercise.description.sets.length === this.exercise.sets.length) {
+      let set = this.exercise.description.sets.at(-1)!;
+      if(this.exercise.sets.at(-1)!.r) set.r = this.exercise.sets.at(-1)!.r;
+      if(this.exercise.sets.at(-1)!.w) set.w = this.exercise.sets.at(-1)!.w;
+      this.exercise.sets.push(set);
+    } else {
+      this.exercise.sets.push(this.exercise.sets.at(-1)!);
+    }
   }
 
   deleteSet(index : number): void {

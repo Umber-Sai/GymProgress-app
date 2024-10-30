@@ -26,5 +26,5 @@ export type ExerciseSetsType = {[key : string] : ExerciseSetType}
 export type ExerciseHistorySetsType = {[key : string] : ExerciseHistorySetType}
 
 
-export type ExerciseSetType = {w : string, r : string}
+export type ExerciseSetType = {'w' : string, 'r' : string}
 export type ExerciseHistorySetType = {w? : string, r? : string}
