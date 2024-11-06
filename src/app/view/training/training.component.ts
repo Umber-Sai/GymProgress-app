@@ -63,7 +63,7 @@ export class TrainingComponent implements OnInit, OnDestroy {
   }
 
   filterExercises(val: string): void {
-    this.autoCompliterOptions = this.dataManager.filterExercises(val);
+    this.autoCompliterOptions = this.dataManager.filterExercises(val.toLocaleLowerCase());
   }
 
 

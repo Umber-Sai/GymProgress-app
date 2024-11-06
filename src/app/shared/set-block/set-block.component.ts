@@ -73,7 +73,8 @@ export class SetBlockComponent implements OnInit {
             const offsetX = event.touches[0].clientX - initX;
             const corner = Math.atan(Math.abs(offsetY) / Math.abs(offsetX)) * 180 / Math.PI;
             if (corner < 80) {
-                event.preventDefault()
+                event.preventDefault();
+                (document.activeElement as HTMLElement).blur();
                 this.isMoove = true;
             }
         }, { once: true, passive : false })
