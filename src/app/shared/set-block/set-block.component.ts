@@ -1,5 +1,7 @@
-import { animate, style, transition, trigger } from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from 'src/app/app.component';
 import { ExerciseSetType } from 'src/app/type/exercise-history.type';
 
 @Component({
@@ -7,11 +9,32 @@ import { ExerciseSetType } from 'src/app/type/exercise-history.type';
   templateUrl: './set-block.component.html',
   styleUrls: ['./set-block.component.scss'],
   animations: [
-    trigger('fadeOut', [
-      // Анимация срабатывает при удалении элемента с экрана (transition(':leave'))
-      transition(':leave', [
-        style({ opacity: 1, transform: 'translateY(0)' }),  // Начальные стили
-        animate('500ms ease', style({ opacity: 0, transform: 'translateY(-20px)' })) // Конечные стили
+    trigger('openClose', [
+      state(
+        'open',
+        style({
+          height: '200px',
+          opacity: 1,
+          backgroundColor: 'yellow',
+        }),
+      ),
+      state(
+        'closed',
+        style({
+          height: '100px',
+          opacity: 0.8,
+          backgroundColor: 'blue',
+        }),
+      ),
+      transition('open => closed', [animate('1s')]),
+      transition('closed => open', [animate('0.5s')]),
+    ]),
+    trigger('swipe', [
+      transition(':increment', [
+        animate('50ms', style({ transform: 'translateX({{x}}px)' }))
+      ]),
+      transition(':decrement', [
+        animate('50ms', style({ transform: 'translateX({{x}}px)' }))
       ])
     ])
   ]
@@ -25,9 +48,9 @@ export class SetBlockComponent implements OnInit {
   positionX = 0;
   offsetX = 0;
   isMoove : boolean = false;
-  target: HTMLElement | null = null
 
-  @HostBinding('@fadeOut') fadeOutAnimation = true;
+
+  // @HostBinding('@fadeOut') fadeOutAnimation = true;
 
 
   constructor() { }
@@ -88,5 +111,8 @@ export class SetBlockComponent implements OnInit {
 
 
 }
+
+
+
 
 

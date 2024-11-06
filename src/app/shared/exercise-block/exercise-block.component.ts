@@ -21,6 +21,7 @@ export class ExerciseBlockComponent implements OnInit {
 
   @Output() deleteExerciseEvent: EventEmitter<string> = new EventEmitter<string>();
   groups : DataObjectType = this.localStorageService.getGroups();
+  setCount : Array<null> = []
 
   constructor(
     private dialog : MatDialog,
@@ -30,6 +31,14 @@ export class ExerciseBlockComponent implements OnInit {
 
   ngOnInit(): void {
     this.localStorageService.$groups.subscribe(groups => this.groups = groups);
+    this.setCount = this.updateSetCount()
+  }
+
+  private updateSetCount() : Array<null> {
+    if(!this.exercise) return []
+    const valuesCount = this.exercise?.sets.length;
+    const labelsCount = this.exercise?.description.sets.length;
+    return Array( valuesCount > labelsCount ? valuesCount : labelsCount).fill(null)
   }
 
   openDialog() : void {
@@ -64,10 +73,15 @@ export class ExerciseBlockComponent implements OnInit {
       if(!this.exercise.sets.at(-1)!.r && !this.exercise.sets.at(-1)!.w) return
       this.exercise.sets.push(structuredClone(this.exercise.sets.at(-1)!));
     }
+    this.setCount = this.updateSetCount();
+    console.log(this.exercise.sets)
+    console.log(this.exercise.sets.slice(this.exercise.description.sets.length))
   }
 
   deleteSet(index : number): void {
-    this.exercise?.sets.splice(index, 1)
+    if(this.exercise?.sets.length === 0) return
+    this.exercise?.sets.splice(index, 1);
+    this.setCount = this.updateSetCount();
   }
 
 

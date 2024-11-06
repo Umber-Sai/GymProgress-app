@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ExerciseDescriptionType, ExerciseType, ExreciseNameIdType } from '../../type/exercise.type';
 import { LocalStorageService } from '../../shared/services/local-storage.service';
 import { DefaultResponceType } from '../../type/default-responce.type';
@@ -16,7 +16,7 @@ import { SessionStorageService } from 'src/app/shared/services/session-storage.s
   templateUrl: './training.component.html',
   styleUrls: ['./training.component.scss']
 })
-export class TrainingComponent implements OnInit {
+export class TrainingComponent implements OnInit, OnDestroy {
 
 
   newExerciseName: string = '';
@@ -51,6 +51,10 @@ export class TrainingComponent implements OnInit {
         this.finishTrain()
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.sessionStorageService.saveExercises(this.exercises);
   }
 
   ngOnInit(): void {
