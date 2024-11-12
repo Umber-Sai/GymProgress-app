@@ -20,7 +20,7 @@
     </div>
     
     <div class="exercise-sets">
-        <div class="exercises-old-sets" *ngIf="exercise.sets.length <= exercise.description.sets.length">
+        <!-- <div class="exercises-old-sets" *ngIf="exercise.sets.length <= exercise.description.sets.length">
             <set-block *ngFor="let set of exercise.description.sets; let i = index" 
                 (deleteSet)="deleteSet(i)"
                 [labels]="exercise.description.sets[i] || {w : '', r : ''}" 
@@ -33,7 +33,12 @@
             [labels]="exercise.description.sets[i] || {w : '', r : ''}" 
             [values]="exercise.sets[i]"
             ></set-block>
-        </div>
+        </div> -->
+
+        <set-block *ngFor="let index of setsIndex(); " 
+                (deleteSet)="deleteSet(index)"
+                [labels]="exercise.description.sets[index] || {w : '', r : ''}" 
+                [values]="exercise.sets[index] || null"></set-block>
 
        
 

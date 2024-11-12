@@ -1,4 +1,4 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { animate, animation, keyframes, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from 'src/app/app.component';
@@ -9,32 +9,15 @@ import { ExerciseSetType } from 'src/app/type/exercise-history.type';
   templateUrl: './set-block.component.html',
   styleUrls: ['./set-block.component.scss'],
   animations: [
-    trigger('openClose', [
-      state(
-        'open',
-        style({
-          height: '200px',
-          opacity: 1,
-          backgroundColor: 'yellow',
-        }),
-      ),
-      state(
-        'closed',
-        style({
-          height: '100px',
-          opacity: 0.8,
-          backgroundColor: 'blue',
-        }),
-      ),
-      transition('open => closed', [animate('1s')]),
-      transition('closed => open', [animate('0.5s')]),
-    ]),
-    trigger('swipe', [
-      transition(':increment', [
-        animate('50ms', style({ transform: 'translateX({{x}}px)' }))
-      ]),
-      transition(':decrement', [
-        animate('50ms', style({ transform: 'translateX({{x}}px)' }))
+    trigger('setBehavior', [
+      transition(':enter', [
+        animate('500ms ease-out',
+          keyframes([
+            style({ height: '0px', padding : 0, opacity: '0' }),
+            style({ height: '*', padding : '*', opacity: '0' }),
+            style({ height: '*', opacity: '*' }),
+          ])
+        )
       ])
     ])
   ]
