@@ -34,11 +34,16 @@
             [values]="exercise.sets[i]"
             ></set-block>
         </div> -->
+        <div class="exercise-set" *ngFor="let set of setIndexes; let index = index" @setBehavior (@setBehavior.done)="onAnimationDone(index)">
+            <set-block 
+            (deleteSet)="deleteSet(index)"
+            [index]="setIndexes.indexOf(set)"
+            [labels]="exercise.description.sets[index] || {w : '', r : ''}" 
+            [values]="exercise.sets[index]">
+            </set-block>
+        </div>
 
-        <set-block *ngFor="let index of setsIndex(); " 
-                (deleteSet)="deleteSet(index)"
-                [labels]="exercise.description.sets[index] || {w : '', r : ''}" 
-                [values]="exercise.sets[index] || null"></set-block>
+       
 
        
 

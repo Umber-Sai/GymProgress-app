@@ -7,12 +7,25 @@ import { LocalStorageService } from '../services/local-storage.service';
 import { FormPopupComponent } from '../form-popup/form-popup.component';
 import { DataObjectType } from 'src/app/type/data-object.type';
 import { ExerciseSetType } from 'src/app/type/exercise-history.type';
+import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 
 
 @Component({
   selector: 'exercise-block',
   templateUrl: './exercise-block.component.html',
-  styleUrls: ['./exercise-block.component.scss']
+  styleUrls: ['./exercise-block.component.scss'],
+  animations : [
+    trigger('setBehavior', [
+      transition(':leave', animate(
+        '500ms',
+        keyframes([
+          style({height : '*', opacity : '*'}),
+          style({height : '*', opacity : '0'}),
+          style({height : '0', opacity : '0'}),
+        ])
+      ))
+    ])
+  ]
 })
 export class ExerciseBlockComponent implements OnInit {
 
@@ -21,7 +34,8 @@ export class ExerciseBlockComponent implements OnInit {
 
   @Output() deleteExerciseEvent: EventEmitter<string> = new EventEmitter<string>();
   groups : DataObjectType = this.localStorageService.getGroups();
-
+  setIndexes : Array<number> = [];
+  deleted : boolean = false
   constructor(
     private dialog : MatDialog,
     private router : Router,
@@ -30,23 +44,20 @@ export class ExerciseBlockComponent implements OnInit {
 
   ngOnInit(): void {
     this.localStorageService.$groups.subscribe(groups => this.groups = groups);
+    this.setIndexes = this.setIndexesUpdate();
   }
 
-  setsIndex() {
-    if(!this.exercise) return
+  setIndexesUpdate() : Array<number> {
+    if(!this.exercise) return []
     const currentValLeng = this.exercise?.sets.length;
     const prevValLeng = this.exercise?.description.sets.length;
     const result = [];
-    if(currentValLeng > prevValLeng) {
-      for (let i = 0; i < currentValLeng; i++) {
-        result.push(i)
-      }
-    } else {
-      for (let i = 0; i < prevValLeng; i++) {
-        result.push(i)
-      }
+    const count = currentValLeng > prevValLeng? currentValLeng : prevValLeng;
+    for (let i = 0; i < count; i++) {
+      result.push(i)
     }
-    return result
+    
+    return result 
   }
 
 
@@ -70,25 +81,32 @@ export class ExerciseBlockComponent implements OnInit {
   }
 
   addSet() : void {
-    if(!this.exercise) return
-    if(this.exercise.description.sets.length > this.exercise.sets.length || this.exercise.sets.length === 0) {
-      this.exercise.sets.push({w : '', r : ''});
-    } else if (this.exercise.description.sets.length === this.exercise.sets.length) {
-      let set = this.exercise.description.sets.at(-1)!;
-      if(this.exercise.sets.at(-1)!.r) set.r = this.exercise.sets.at(-1)!.r;
-      if(this.exercise.sets.at(-1)!.w) set.w = this.exercise.sets.at(-1)!.w;
-      this.exercise.sets.push(structuredClone(set));
-    } else {
-      if(!this.exercise.sets.at(-1)!.r && !this.exercise.sets.at(-1)!.w) return
-      this.exercise.sets.push(structuredClone(this.exercise.sets.at(-1)!));
+    if(!this.exercise!.sets.at(-1)!.r && !this.exercise!.sets.at(-1)!.w) return
+    let newSet = {r: '', w: ''};
+    if(this.exercise!.sets.length >= this.exercise!.description.sets.length) {
+      newSet.r = this.exercise!.sets.at(-1)?.r || this.exercise!.description.sets.at(-1)?.r || '';
+      newSet.w = this.exercise!.sets.at(-1)?.w || this.exercise!.description.sets.at(-1)?.w || '';
+    } 
+    
+    this.exercise?.sets.push(newSet);
+
+    if(this.setIndexes.length < this.exercise!.sets.length) {
+      this.setIndexes.push(this.setIndexes.at(-1)! + 1)
     }
-    console.log(this.exercise.sets)
-    console.log(this.exercise.sets.slice(this.exercise.description.sets.length))
   }
 
-  deleteSet(index : number): void {
-    if(this.exercise?.sets.length === 0) return
+  deleteSet( index : number): void {
+    if(this.exercise!.sets.length < 2) return
+    this.setIndexes.splice(index, 1);
     this.exercise?.sets.splice(index, 1);
+    this.deleted = true
+  }
+
+  onAnimationDone(index: number): void {
+    if (this.deleted && this.exercise!.description.sets.length > this.setIndexes.length) {
+      this.setIndexes.push(this.setIndexes.at(-1)! + 1)
+    }
+    this.deleted = false
   }
 
 

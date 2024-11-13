@@ -70,6 +70,9 @@
     }
     .exercise-sets {
         margin: 20px 0;
+        .exercise-set {
+            overflow: hidden;
+        }
         .exercise-add-set {
             aspect-ratio: 3/1;
             height: 40px;

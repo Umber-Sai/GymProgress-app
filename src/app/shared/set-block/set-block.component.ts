@@ -27,6 +27,7 @@ export class SetBlockComponent implements OnInit {
   @Input() labels : ExerciseSetType = {w : '', r : ''}
   @Input() values : ExerciseSetType | null = null;
   @Input() disabled : boolean = false;
+  @Input() index : number = -1;
   @Output() deleteSet : EventEmitter<boolean> = new EventEmitter<boolean>()
   positionX = 0;
   offsetX = 0;
@@ -79,7 +80,6 @@ export class SetBlockComponent implements OnInit {
 
   onTouchEnd(event: TouchEvent, target : HTMLElement) {
     if(this.disabled || !this.values) return
-    console.log('Конечная позиция:', this.positionX);
     target.style.transition = 'all .5s'
     target.style.transform = `translateX(0px)`;
     if(this.positionX < -100) {
