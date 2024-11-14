@@ -5,8 +5,6 @@ import { PopupComponent } from '../popup/popup.component';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../services/local-storage.service';
 import { FormPopupComponent } from '../form-popup/form-popup.component';
-import { DataObjectType } from 'src/app/type/data-object.type';
-import { ExerciseSetType } from 'src/app/type/exercise-history.type';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 
 
@@ -33,7 +31,6 @@ export class ExerciseBlockComponent implements OnInit {
   @Input() exerciseDescription: ExerciseDescriptionType | null = null;
 
   @Output() deleteExerciseEvent: EventEmitter<string> = new EventEmitter<string>();
-  groups : DataObjectType = this.localStorageService.getGroups();
   setIndexes : Array<number> = [];
   constructor(
     private dialog : MatDialog,
@@ -42,7 +39,6 @@ export class ExerciseBlockComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.localStorageService.$groups.subscribe(groups => this.groups = groups);
     this.setIndexes = this.setIndexesUpdate();
   }
 

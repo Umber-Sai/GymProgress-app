@@ -21,7 +21,7 @@ export class LocalStorageService {
   private groupsKey: string = 'groups'
   private trainingHistoryKey: string = 'trainingHistory'
 
-  public $groups : Subject<DataObjectType> = new Subject<DataObjectType>();
+  // public $groups : Subject<DataObjectType> = new Subject<DataObjectType>();
   public $allExercises : Subject<ExreciseNameIdType[]> = new Subject<ExreciseNameIdType[]>();
   constructor(
     private injector: Injector
@@ -100,7 +100,7 @@ export class LocalStorageService {
     const groups = this.getGroups();
     groups[groupId] = groupName;
     this.setGroups(groups);
-    this.$groups.next(groups);
+    // this.$groups.next(groups);
   }
 
 

@@ -4,12 +4,14 @@ import { PopupComponent } from './popup/popup.component';
 import { MatDialogModule} from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { ExerciseBlockComponent } from './exercise-block/exercise-block.component';
-import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { FormPopupComponent } from './form-popup/form-popup.component';
 import { SetBlockComponent } from './set-block/set-block.component';
 import { ClearComponent } from './clear/clear.component';
+import { GroupNamePipe } from './pipes/group-name.pipe';
+
 
 
 @NgModule({
@@ -18,7 +20,8 @@ import { ClearComponent } from './clear/clear.component';
     ExerciseBlockComponent,
     FormPopupComponent,
     SetBlockComponent,
-    ClearComponent
+    ClearComponent,
+    GroupNamePipe
   ],
   imports: [
     CommonModule,

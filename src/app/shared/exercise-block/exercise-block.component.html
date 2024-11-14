@@ -4,7 +4,7 @@
         <div class="exercise-info glass glare" (click)="changeInfo()">
             <div class="exercise-info-name">{{exercise.name}}</div>
             <div class="exercise-info-main">
-                <div class="exercise-info-group">{{groups[exercise.group]}}</div>
+                <div class="exercise-info-group">{{exercise.group | groupName}}</div>
                 <div class="exercise-info-last-train">{{exercise.description.lastTrain| date : 'dd MMMM yyyy'}}</div>
             </div>
         </div>
