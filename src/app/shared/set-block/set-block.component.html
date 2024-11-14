@@ -1,8 +1,9 @@
-
-<div class="exercise-set" #set [ngClass]="{disabled : !values}" [@setBehavior]="isMoove? 'float' : 'init'"
-(touchstart)="onTouchStart($event, set)"
+<!-- (touchstart)="onTouchStart($event, set)"
 (touchmove)="onTouchMove($event, set)"
-(touchend)="onTouchEnd($event, set)"
+(touchend)="onTouchEnd($event, set)" -->
+<div class="exercise-set" #set [ngClass]="{disabled : !values}" [@setBehavior]="isMoove? 'float' : 'init'"
+(touchstart)="onTouchStart($event)"
+(touchend)="onTouchEnd()"
  >
     <span>Weight: </span>
     <div class="exercise-set-form-field">
