@@ -13,9 +13,12 @@ export class ClearComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    localStorage.clear();
-    sessionStorage.clear();
-    alert('clear')
+    const check = prompt('To confirm erasing Data, wright "clear"');
+    if(check === 'clear') {
+      alert('clear');
+      localStorage.clear();
+      sessionStorage.clear();
+    }
     this.router.navigate(['/'])
   }
 
