@@ -1,5 +1,5 @@
 
-<div class="exercise-set" #set [ngClass]="{disabled : !values}" @setBehavior
+<div class="exercise-set" #set [ngClass]="{disabled : !values}" [@setBehavior]="isMoove? 'float' : 'init'"
 (touchstart)="onTouchStart($event, set)"
 (touchmove)="onTouchMove($event, set)"
 (touchend)="onTouchEnd($event, set)"
@@ -20,5 +20,4 @@
             <input type="number" placeholder="{{labels.r}}" disabled>
         </ng-template>
     </div>
-    <div class="index">{{index}}</div>
 </div>

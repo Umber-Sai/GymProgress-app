@@ -20,32 +20,13 @@
     </div>
     
     <div class="exercise-sets">
-        <!-- <div class="exercises-old-sets" *ngIf="exercise.sets.length <= exercise.description.sets.length">
-            <set-block *ngFor="let set of exercise.description.sets; let i = index" 
-                (deleteSet)="deleteSet(i)"
-                [labels]="exercise.description.sets[i] || {w : '', r : ''}" 
-                [values]="exercise.sets[i] || null"></set-block>
-        </div>
-        <div class="exercise-new-sets" *ngIf="exercise.sets.length > exercise.description.sets.length">
-            <set-block 
-            *ngFor="let set of exercise.sets; let i = index" 
-            (deleteSet)="deleteSet(i)"
-            [labels]="exercise.description.sets[i] || {w : '', r : ''}" 
-            [values]="exercise.sets[i]"
-            ></set-block>
-        </div> -->
-        <div class="exercise-set" *ngFor="let set of setIndexes; let index = index" @setBehavior (@setBehavior.done)="onAnimationDone(index)">
+        <div class="exercise-set" *ngFor="let set of setIndexes; let index = index" @setBehavior>
             <set-block 
             (deleteSet)="deleteSet(index)"
-            [index]="setIndexes.indexOf(set)"
             [labels]="exercise.description.sets[index] || {w : '', r : ''}" 
             [values]="exercise.sets[index]">
             </set-block>
         </div>
-
-       
-
-       
 
         <button class="exercise-add-set action-btn glass" (click)="addSet()">Add set</button>
     </div>
@@ -70,7 +51,7 @@
 
     <div class="exercise-sets">
         <set-block *ngFor="let set of exerciseDescription.sets"
-            [labels]="set" [disabled]="true">
+            [labels]="set">
         </set-block>
     </div>
 

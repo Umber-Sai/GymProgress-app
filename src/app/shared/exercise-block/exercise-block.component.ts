@@ -17,7 +17,7 @@ import { animate, keyframes, style, transition, trigger } from '@angular/animati
   animations : [
     trigger('setBehavior', [
       transition(':leave', animate(
-        '500ms',
+        '300ms',
         keyframes([
           style({height : '*', opacity : '*'}),
           style({height : '*', opacity : '0'}),
@@ -35,7 +35,6 @@ export class ExerciseBlockComponent implements OnInit {
   @Output() deleteExerciseEvent: EventEmitter<string> = new EventEmitter<string>();
   groups : DataObjectType = this.localStorageService.getGroups();
   setIndexes : Array<number> = [];
-  deleted : boolean = false
   constructor(
     private dialog : MatDialog,
     private router : Router,
@@ -77,15 +76,16 @@ export class ExerciseBlockComponent implements OnInit {
   }
 
   changeInfo(): void {
-    const dialogRef = this.dialog.open(FormPopupComponent, {data : this.exercise}); 
+    this.dialog.open(FormPopupComponent, {data : this.exercise}); 
   }
 
   addSet() : void {
-    if(!this.exercise!.sets.at(-1)!.r && !this.exercise!.sets.at(-1)!.w) return
     let newSet = {r: '', w: ''};
+    const lastSetIndex = this.exercise!.sets.length - 1;
     if(this.exercise!.sets.length >= this.exercise!.description.sets.length) {
-      newSet.r = this.exercise!.sets.at(-1)?.r || this.exercise!.description.sets.at(-1)?.r || '';
-      newSet.w = this.exercise!.sets.at(-1)?.w || this.exercise!.description.sets.at(-1)?.w || '';
+      newSet.r = this.exercise!.sets[lastSetIndex]?.r || this.exercise!.description.sets[lastSetIndex]?.r || '';
+      newSet.w = this.exercise!.sets[lastSetIndex]?.w || this.exercise!.description.sets[lastSetIndex]?.w || '';
+      if(!newSet.r  && !newSet.w ) return
     } 
     
     this.exercise?.sets.push(newSet);
@@ -99,15 +99,13 @@ export class ExerciseBlockComponent implements OnInit {
     if(this.exercise!.sets.length < 2) return
     this.setIndexes.splice(index, 1);
     this.exercise?.sets.splice(index, 1);
-    this.deleted = true
+    if (this.exercise!.description.sets.length > this.setIndexes.length) {
+      setTimeout(() => {
+        this.setIndexes.push(this.setIndexes.at(-1)! + 1)
+      }, 145);
+    }
   }
 
-  onAnimationDone(index: number): void {
-    if (this.deleted && this.exercise!.description.sets.length > this.setIndexes.length) {
-      this.setIndexes.push(this.setIndexes.at(-1)! + 1)
-    }
-    this.deleted = false
-  }
 
 
 }
