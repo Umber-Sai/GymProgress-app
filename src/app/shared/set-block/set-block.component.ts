@@ -12,16 +12,6 @@ import { ExerciseSetType } from 'src/app/type/exercise-history.type';
       state('float', style({})),
       transition('float => init', [
         animate('500ms 0s ease-out')
-      ]),
-      transition(':enter', [
-        style({ height: '0px', padding : 0, margin : 0,  opacity: '0' }),
-        animate('300ms',
-          keyframes([
-            style({ height: '0px', padding : 0, margin : 0, opacity: '0' }),
-            style({ height: '*', padding : '*', margin : '*', opacity: '0' }),
-            style({ height: '*', opacity: '*' }),
-          ])
-        )
       ])
     ])
   ]

@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ExerciseDescriptionType, ExerciseType, ExreciseNameIdType } from '../../type/exercise.type';
 import { LocalStorageService } from '../../shared/services/local-storage.service';
 import { DefaultResponceType } from '../../type/default-responce.type';
@@ -21,6 +21,7 @@ export class TrainingComponent implements OnInit, OnDestroy {
 
   newExerciseName: string = '';
   exercises: ExerciseType[] = [];
+  activeBlock : number = 0;
 
   date = new Date();
   private today = `${this.date.getMonth() + 1}.${this.date.getDate()}.${this.date.getFullYear()}`
@@ -43,6 +44,16 @@ export class TrainingComponent implements OnInit, OnDestroy {
     this.sessionStorageService.saveExercises(this.exercises);
   }
 
+
+
+  ngOnDestroy(): void {
+    this.sessionStorageService.saveExercises(this.exercises);
+  }
+
+  ngOnInit(): void {
+    this.exercises = this.sessionStorageService.getExercises();
+  }
+
   openDialog(): void {
     const dialogRef = this.dialog.open(PopupComponent, { data: 'Did you finish your train?' });
 
@@ -53,13 +64,16 @@ export class TrainingComponent implements OnInit, OnDestroy {
     })
   }
 
-  ngOnDestroy(): void {
-    this.sessionStorageService.saveExercises(this.exercises);
-  }
-
-  ngOnInit(): void {
-    this.exercises = this.sessionStorageService.getExercises();
-
+  activeBlockUpdate (index : number) : void {
+    this.activeBlock = index;
+    const divs = document.querySelectorAll('.exercise');
+    const divAtIndex = divs[this.activeBlock];
+    if (divAtIndex) {
+      setTimeout(() => {
+        divAtIndex.scrollIntoView({ behavior: 'smooth' });
+      }, 300)
+      
+    }
   }
 
   filterExercises(val: string): void {
@@ -109,6 +123,8 @@ export class TrainingComponent implements OnInit, OnDestroy {
     this.exercises.push(newExercise);
     this.sessionStorageService.saveExercises(this.exercises);
     this.newExerciseName = '';
+
+    this.activeBlock = this.exercises.length - 1
   }
 
   deleteExercise(id: string): void {

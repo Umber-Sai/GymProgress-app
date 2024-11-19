@@ -5,7 +5,7 @@ import { PopupComponent } from '../popup/popup.component';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../services/local-storage.service';
 import { FormPopupComponent } from '../form-popup/form-popup.component';
-import { animate, keyframes, style, transition, trigger } from '@angular/animations';
+import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
 
 
 @Component({
@@ -21,7 +21,24 @@ import { animate, keyframes, style, transition, trigger } from '@angular/animati
           style({height : '*', opacity : '0'}),
           style({height : '0', opacity : '0'}),
         ])
-      ))
+      )),
+      transition(':enter', [
+        style({ height: '0px', padding : 0, margin : 0,  opacity: '0' }),
+        animate('300ms',
+          keyframes([
+            style({ height: '0px', padding : 0, margin : 0, opacity: '0' }),
+            style({ height: '*', padding : '*', margin : '*', opacity: '0' }),
+            style({ height: '*', opacity: '*' }),
+          ])
+        )
+      ])
+    ]),
+    trigger('blockBehavior', [
+      state('open', style({height : '*', margin : '*', padding : '*'})),
+      state('close', style({height : '0', margin : '0', padding : '0'})),
+      transition('open <=> close', [
+        animate('200ms ease-out')
+      ])
     ])
   ]
 })
@@ -29,13 +46,13 @@ export class ExerciseBlockComponent implements OnInit {
 
   @Input() exercise: ExerciseType | null = null;
   @Input() exerciseDescription: ExerciseDescriptionType | null = null;
+  @Input() isActive : boolean = true;
 
   @Output() deleteExerciseEvent: EventEmitter<string> = new EventEmitter<string>();
   setIndexes : Array<number> = [];
   constructor(
     private dialog : MatDialog,
     private router : Router,
-    private localStorageService : LocalStorageService,
   ) { }
 
   ngOnInit(): void {
@@ -72,6 +89,7 @@ export class ExerciseBlockComponent implements OnInit {
   }
 
   changeInfo(): void {
+    // this.isActive = !this.isActive
     this.dialog.open(FormPopupComponent, {data : this.exercise}); 
   }
 

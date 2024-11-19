@@ -1,14 +1,14 @@
-<div class="exercise block"  *ngIf="exercise">
+<div class="exercise block"  *ngIf="exercise" >
 
     <div class="exercise-head">
-        <div class="exercise-info glass glare" (click)="changeInfo()">
+        <div class="exercise-info glass glare" (click)="changeInfo()" [ngStyle]="{'pointer-events': isActive ? 'auto' : 'none'}">
             <div class="exercise-info-name">{{exercise.name}}</div>
             <div class="exercise-info-main">
                 <div class="exercise-info-group">{{exercise.group | groupName}}</div>
                 <div class="exercise-info-last-train">{{exercise.description.lastTrain| date : 'dd MMMM yyyy'}}</div>
             </div>
         </div>
-        <div class="exercise-ations">
+        <div class="exercise-actions">
             <div class="exercise-history action-btn glass" (click)="moveToHistory()">
                 ︙
             </div>
@@ -18,22 +18,24 @@
             </div>
         </div>    
     </div>
+
+    <div class="exercise-body" [@blockBehavior]="isActive? 'open' : 'close'">
     
-    <div class="exercise-sets">
-        <div class="exercise-set" *ngFor="let set of setIndexes; let index = index" @setBehavior>
-            <set-block 
-            (deleteSet)="deleteSet(index)"
-            [labels]="exercise.description.sets[index] || {w : '', r : ''}" 
-            [values]="exercise.sets[index]">
-            </set-block>
+        <div class="exercise-sets" >
+            <div class="exercise-set" *ngFor="let set of setIndexes; let index = index" @setBehavior>
+                <set-block (deleteSet)="deleteSet(index)" [labels]="exercise.description.sets[index] || {w : '', r : ''}"
+                    [values]="exercise.sets[index]">
+                </set-block>
+            </div>
+    
+            <button class="exercise-add-set action-btn glass" (click)="addSet()">Add set</button>
         </div>
-
-        <button class="exercise-add-set action-btn glass" (click)="addSet()">Add set</button>
+    
+        <div class="exercise-comment insert" [@blockBehavior]="isActive? 'open' : 'close'">
+            <textarea [(ngModel)]="exercise.comment" class="exercise-comment-textarea" placeholder="Comment..."></textarea>
+        </div>
     </div>
-
-    <div class="exercise-comment insert">
-        <textarea [(ngModel)]="exercise.comment" class="exercise-comment-textarea" placeholder="Comment..."></textarea>
-    </div>
+    
 </div>
 
 

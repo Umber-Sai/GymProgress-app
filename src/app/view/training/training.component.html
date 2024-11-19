@@ -3,8 +3,12 @@
 
     <div class="training-exercises">
 
-        <exercise-block *ngFor="let exercise of exercises" [exercise]="exercise"
-            (deleteExerciseEvent)="deleteExercise($event)"></exercise-block>
+        <exercise-block *ngFor="let exercise of exercises; let i = index"
+            [exercise]="exercise"
+            [isActive]="i === activeBlock"
+            (click)="activeBlockUpdate(i)"
+            (deleteExerciseEvent)="deleteExercise($event)"
+            ></exercise-block>
 
     </div>
 
